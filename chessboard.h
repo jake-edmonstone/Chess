@@ -9,10 +9,11 @@
 class ChessBoard {
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
  public:
+  ChessBoard();
   void calculateAvailableMoves();
   bool isCheck(std::string colour);
   bool isCheckMate(std::string colour);
-  void move(std::pair<int,int> start, std::pair<int,int> end);
+  void move(std::string start, std::string end);
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };
 
