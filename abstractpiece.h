@@ -11,8 +11,31 @@ class AbstractPiece {
   std::vector<std::string> threats;
   std::string colour;
  public:
-  virtual ~AbstractPiece();
-  virtual std::vector<Vec> getPotentialMoves() = 0;
+  virtual ~AbstractPiece() = 0;
+  virtual std::vector<Vec> getPotentialMoves() const = 0;
+  friend class ChessBoard; 
+};
+
+class King: public AbstractPiece {
+  std::vector<Vec> getPotentialMoves() const override;
+};
+class Queen: public AbstractPiece {
+  std::vector<Vec> getPotentialMoves() const override;
+};
+class Rook: public AbstractPiece {
+  std::vector<Vec> getPotentialMoves() const override;
+};
+class Knight: public AbstractPiece {
+  std::vector<Vec> getPotentialMoves() const override;
+};
+class Bishop: public AbstractPiece {
+  std::vector<Vec> getPotentialMoves() const override;
+};
+class WhitePawn: public AbstractPiece {
+  std::vector<Vec> getPotentialMoves() const override;
+};
+class BlackPawn: public AbstractPiece {
+  std::vector<Vec> getPotentialMoves() const override;
 };
 
 #endif
