@@ -1,2 +1,2 @@
-Chess game
+Chess game project
 
