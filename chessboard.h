@@ -22,6 +22,8 @@ class ChessBoard {
   void updatePieceLists();
   // called by calculateAvailableMoves to remove the possibility of putting yourself in check
   void dontCheckYourself();
+  // called by calculate moves to make sure you get out of check if you are in it
+  void getOutOfCheck();
  public:
   // ChessBoard ctor, takes a string to signify how it should be set up: "default" means official chess "empty" means empty
   ChessBoard(std::string config);
@@ -31,7 +33,7 @@ class ChessBoard {
   void calculateAvailableMoves();
   bool isCheck(std::string colour);
   bool isCheckMate(std::string colour);
-  void move(std::string start, std::string end);
+  void movePiece(std::string start, std::string end);
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };
 

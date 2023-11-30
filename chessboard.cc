@@ -5,8 +5,8 @@
 
 using namespace std;
 
-template<typename T> bool in(const std::vector<T>& vec, const T& element) {
-
+template<typename T> bool in(const vector<T>& vec, const T& element) {
+  return find(vec.begin(), vec.end(), element) != vec.end();
 }
 
 bool ChessBoard::inrange(int r, int c) {
@@ -115,13 +115,54 @@ bool ChessBoard::isCheck(string colour) {
     }
   }
 }
-void ChessBoard::move(string start, string end) {
+void ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
   auto endCoords = rankFileToIntPair(end);
-  if (board[startCoords.first][startCoords.second]->availableMoves)
+  if (in(board[startCoords.first][startCoords.second]->availableMoves, end)) { // if end is in the available moves of the piece at start
+    board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
+    board[startCoords.first][startCoords.second] = nullptr;
+  }
 }
 void ChessBoard::dontCheckYourself() {
-  ;
+  for (int r = 0; r < 8; ++r) {
+    for (int c = 0; c < 8; ++c) {
+      auto &piece = board[r][c];
+      if (piece) {
+        auto originalMoves = piece->availableMoves;
+        piece->availableMoves.clear();
+        for (const auto &move: originalMoves) {
+          ChessBoard tempBoard(*this);
+          string start = intPairToRankFile(r, c);
+          tempBoard.movePiece(start, move);
+          if (!tempBoard.isCheck(piece->getColour())) {
+            piece->availableMoves.emplace_back(move);
+          }
+        }
+      }
+    }
+  }
+}
+void ChessBoard::getOutOfCheck() {
+  for (int r = 0; r < 8; ++r) {
+    for (int c = 0; c < 8; ++c) {
+      auto &piece = board[r][c];
+      if (piece) {
+        string pieceColour = piece->getColour();
+        if (isCheck(pieceColour)) {
+          auto originalMoves = piece->availableMoves;
+          piece->availableMoves.clear();
+          for (const auto &move : originalMoves) {
+            ChessBoard tempBoard(*this);
+            string start = intPairToRankFile(r, c);
+            tempBoard.movePiece(start, move);
+            if (!tempBoard.isCheck(pieceColour)) {
+              piece->availableMoves.emplace_back(move);
+            }
+          }
+        }
+      }
+    }
+  }
 }
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
   char sym;
