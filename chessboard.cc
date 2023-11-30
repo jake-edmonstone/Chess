@@ -10,8 +10,12 @@ bool ChessBoard::inrange(int r, int c) {
     return true;
 }
 
-int ChessBoard::intPairToRankFile(int row, int col) {
-    row += 9;
+string ChessBoard::intPairToRankFile(int row, int col) {
+    col += 65;
+    char ch = col;
+    string c = to_string(ch);
+    c += to_string(row);
+    return c;
 }
 
 int ChessBoard::rankFileToIntPair(string rf) {
