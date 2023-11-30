@@ -62,3 +62,11 @@ string WhitePawn::getName() const {
 string BlackPawn::getName() const {
   return "blackpawn";
 }
+
+King::King(string colour): AbstractPiece{colour} {}
+Queen::Queen(string colour): AbstractPiece{colour} {}
+Rook::Rook(string colour): AbstractPiece{colour} {}
+Knight::Knight(string colour): AbstractPiece{colour} {}
+Bishop::Bishop(string colour): AbstractPiece{colour} {}
+BlackPawn::BlackPawn(string colour): AbstractPiece{colour} {}
+WhitePawn::WhitePawn(string colour): AbstractPiece{colour} {}
