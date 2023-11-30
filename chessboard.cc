@@ -20,7 +20,7 @@ void ChessBoard::calculateAvailableMoves() {
                 std::vector<Vec> potentialmoves = col->getPotentialMoves();
                 for (auto m: potentialmoves) {
                     if (inrange(r + m.y, c + m.x)) {
-                        ;
+                        y + 5;
                     }
                 }
             }
