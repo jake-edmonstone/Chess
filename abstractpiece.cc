@@ -3,9 +3,7 @@ using namespace std;
 
 AbstractPiece::AbstractPiece(string colour): colour{colour} {}
 
-AbstractPiece::~AbstractPiece() {
-
-}
+AbstractPiece::~AbstractPiece() {}
 
 std::vector<Vec> King::getPotentialMoves() const {
   return {{1,0}, {1,1}, {0,1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}};
@@ -40,4 +38,25 @@ std::vector<Vec> WhitePawn::getPotentialMoves() const {
 }
 std::vector<Vec> BlackPawn::getPotentialMoves() const {
   return {{0,-1}, {0,-2}, {1,-1}, {-1,-1}};
+}
+string King::getName() const {
+  return "king";
+}
+string Queen::getName() const {
+  return "queen";
+}
+string Rook::getName() const {
+  return "rook";
+}
+string Knight::getName() const {
+  return "knight";
+}
+string Bishop::getName() const {
+  return "bishop";
+}
+string WhitePawn::getName() const {
+  return "whitepawn";
+}
+string BlackPawn::getName() const {
+  return "blackpawn";
 }

@@ -2,10 +2,6 @@
 
 using namespace std;
 
-ChessBoard::ChessBoard() {
-  
-}
-
 void ChessBoard::calculateAvailableMoves() {
     int r = 0;
     for (auto row: board) {
@@ -23,6 +19,8 @@ void ChessBoard::calculateAvailableMoves() {
         }
         ++r;
     }
+}
+
 ChessBoard::ChessBoard(string config) {
   board.resize(8);
   for (auto &i: board) i.resize(8);
