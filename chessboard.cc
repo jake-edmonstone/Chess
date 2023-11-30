@@ -2,6 +2,15 @@
 
 using namespace std;
 
+<<<<<<< HEAD
+=======
+bool ChessBoard::inrange(int r, int c) {
+    if (r < 0 || r > 7) return false;
+    if (c < 0 || c > 7) return false;
+    return true;
+}
+
+>>>>>>> 73406f0 (More edits)
 void ChessBoard::calculateAvailableMoves() {
     int r = 0;
     for (auto row: board) {
@@ -10,8 +19,8 @@ void ChessBoard::calculateAvailableMoves() {
             if (col != nullptr) {
                 std::vector<Vec> potentialmoves = col->getPotentialMoves();
                 for (auto m: potentialmoves) {
-                    if (board[r][c] == ) {
-                        
+                    if (inrange(r + m.y, c + m.x)) {
+                        ;
                     }
                 }
             }
