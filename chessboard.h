@@ -10,7 +10,7 @@ class ChessBoard {
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
   bool inrange(int r, int c);
   int rankFileToIntPair(std::string rf);
-  string intPairToRankFile(int row, int col);
+  std::string intPairToRankFile(int row, int col);
  public:
   ChessBoard(std::string config);
   void calculateAvailableMoves();
