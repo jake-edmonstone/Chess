@@ -5,6 +5,8 @@ AbstractPiece::AbstractPiece(string colour): colour{colour} {}
 
 AbstractPiece::~AbstractPiece() {}
 
+string AbstractPiece::getColour() {return colour;}
+
 std::vector<Vec> King::getPotentialMoves() const {
   return {{1,0}, {1,1}, {0,1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}};
 }

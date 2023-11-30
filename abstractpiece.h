@@ -15,7 +15,8 @@ class AbstractPiece {
   virtual ~AbstractPiece() = 0;
   virtual std::vector<Vec> getPotentialMoves() const = 0;
   virtual std::string getName() const = 0;
-  friend class ChessBoard; 
+  friend class ChessBoard;
+  string getColour(); 
 };
 
 class King: public AbstractPiece {

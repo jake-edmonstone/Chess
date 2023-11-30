@@ -10,16 +10,32 @@ bool ChessBoard::inrange(int r, int c) {
     return true;
 }
 
+int ChessBoard::intPairToRankFile(int row, int col) {
+    row += 9;
+}
+
+int ChessBoard::rankFileToIntPair(string rf) {
+    ;
+}
+
 void ChessBoard::calculateAvailableMoves() {
     int r = 0;
-    for (auto row: board) {
+    for (auto &row: board) {
         int c = 0;
         for (auto &col: row) {
             if (col != nullptr) {
                 std::vector<Vec> potentialmoves = col->getPotentialMoves();
                 for (auto m: potentialmoves) {
                     if (inrange(r + m.y, c + m.x)) {
-                        
+                        if (board[r][c]->colour != board[r + m.y][c + m.x]->colour || board[r + m.y][c + m.x] == nullptr) {
+                            // either there is an opposing piece, or no piece on the position r + m.y, c + m.x
+                            if (m.x == 0 || m.y == 0 || m.x == m.y) {
+
+                            } else {
+                                board[r][c]->availableMoves.emplace_back(intPairToRankFile(r + m.y, c + m.x));
+                                // target??
+                            }
+                        }
                     }
                 }
             }

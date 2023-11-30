@@ -9,6 +9,8 @@
 class ChessBoard {
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
   bool inrange(int r, int c);
+  int rankFileToIntPair(string rf);
+  int intPairToRankFile(int row, int col);
  public:
   ChessBoard(std::string config);
   void calculateAvailableMoves();
