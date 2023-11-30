@@ -26,7 +26,7 @@ std::vector<Vec> Rook::getPotentialMoves() const {
           { 0, 1}, { 0, 2}, { 0, 3}, { 0, 4}, { 0, 5}, { 0, 6}, { 0, 7},
           { 0,-1}, { 0,-2}, { 0,-3}, { 0,-4}, { 0,-5}, { 0,-6}, { 0,-7}};
 }
-std::vector<Vec> Rook::getPotentialMoves() const {
+std::vector<Vec> Knight::getPotentialMoves() const {
   return {{2,1}, {2,-1}, {1,2}, {-1,2}, {-2,1}, {-2,-1}, {1,-2}, {-1,-2}};
 }
 std::vector<Vec> Bishop::getPotentialMoves() const {

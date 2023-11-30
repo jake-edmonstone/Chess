@@ -1,6 +1,8 @@
 #include <iostream>
 #include "random.h"
+#include "chessboard.h"
 
 int main() {
-  std::cout<<randInt(10)<<std::endl;
+  ChessBoard cb {"default"};
+  std::cout<<cb;
 }

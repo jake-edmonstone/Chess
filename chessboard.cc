@@ -79,14 +79,20 @@ std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) {
   char sym;
   for (const auto &i: chessboard.board) {
     for (const auto &j: i) {
+      if (!j) {
+        out << '_';
+        continue;
+      }
       if (j->getName() == "rook") sym = 'r';
-      if (j->getName() == "knight") sym = 'n';
-      if (j->getName() == "bishop") sym = 'b';
-      if (j->getName() == "king") sym = 'k';
-      if (j->getName() == "queen") sym = 'q';
-      if (j->getName() == "blackpawn" || j->getName() == "whitepawn") sym = 'p';
-      if (j->colour == "white") 
+      else if (j->getName() == "knight") sym = 'n';
+      else if (j->getName() == "bishop") sym = 'b';
+      else if (j->getName() == "king") sym = 'k';
+      else if (j->getName() == "queen") sym = 'q';
+      else if (j->getName() == "blackpawn" || j->getName() == "whitepawn") sym = 'p';
+      if (j->getColour() == "white") out << toupper(sym);
+      else out << sym;
     }
     cout << endl;
   }
+  return out;
 }
