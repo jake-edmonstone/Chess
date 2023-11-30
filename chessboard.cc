@@ -33,7 +33,10 @@ void ChessBoard::calculateAvailableMoves() {
                     if (inrange(r + m.y, c + m.x)) {
                         if (board[r + m.y][c + m.x] == nullptr) {
                             if (m.x == 0 || m.y == 0 || m.x == m.y) {
-                                // do something
+                                // do something --> loop through the positions
+                                if (m.x == m.y) {
+                                    
+                                }
                             } else {
                                 board[r][c]->availableMoves.emplace_back(intPairToRankFile(r + m.y, c + m.x));
                             }
