@@ -11,6 +11,7 @@ class AbstractPiece {
   std::vector<std::string> threats;
   std::string colour;
  public:
+  AbstractPiece(std::string colour);
   virtual ~AbstractPiece() = 0;
   virtual std::vector<Vec> getPotentialMoves() const = 0;
   friend class ChessBoard; 
