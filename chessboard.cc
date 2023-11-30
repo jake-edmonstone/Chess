@@ -31,14 +31,14 @@ void ChessBoard::calculateAvailableMoves() {
                 std::vector<Vec> potentialmoves = col->getPotentialMoves();
                 for (auto m: potentialmoves) {
                     if (inrange(r + m.y, c + m.x)) {
-                        if (board[r][c]->colour != board[r + m.y][c + m.x]->colour || board[r + m.y][c + m.x] == nullptr) {
-                            // either there is an opposing piece, or no piece on the position r + m.y, c + m.x
+                        if (board[r + m.y][c + m.x] == nullptr) {
                             if (m.x == 0 || m.y == 0 || m.x == m.y) {
-
+                                // do something
                             } else {
                                 board[r][c]->availableMoves.emplace_back(intPairToRankFile(r + m.y, c + m.x));
-                                // target??
                             }
+                        } else if (board[r][c]->colour != board[r + m.y][c + m.x]->colour) {
+                            // code
                         }
                     }
                 }
