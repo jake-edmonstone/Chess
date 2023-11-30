@@ -6,7 +6,11 @@ AbstractPiece::AbstractPiece(string colour): colour{colour} {}
 
 AbstractPiece::~AbstractPiece() {}
 
-string AbstractPiece::getColour() {return colour;}
+string AbstractPiece::getColour() { return colour; }
+
+void AbstractPiece::addAvailableMove(string move) { availableMoves.emplace_back(move); }
+
+void AbstractPiece::addTarget(string target) { targets.emplace_back(target); }
 
 std::vector<Vec> King::getPotentialMoves() const {
   return {{1,0}, {1,1}, {0,1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}};

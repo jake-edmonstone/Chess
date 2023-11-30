@@ -18,6 +18,8 @@ class AbstractPiece {
   virtual std::vector<Vec> getPotentialMoves() const = 0;
   virtual std::string getName() const = 0;
   friend class ChessBoard;
+  void addAvailableMove(string move);
+  void addTarget(string target);
   std::string getColour(); 
 };
 

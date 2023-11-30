@@ -27,6 +27,52 @@ pair<int,int> ChessBoard::rankFileToIntPair(string rf) {
     ;
 }
 
+bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) {
+    if (xshift == 0) {
+        if (yshift > 0) {
+            for (int y = 1; y < yshift; y++) {
+                if (board[firstpiecey + y][firstpiecex].get() != nullptr) return true;
+            }
+        } else {
+            for (int y = -1; y > yshift; y--) {
+                if (board[firstpiecey + y][firstpiecex].get() != nullptr) return true;
+            }
+        }
+    } else if (yshift == 0) {
+        if (xshift > 0) {
+            for (int x = 1; x < xshift; x++) {
+                if (board[firstpiecey][firstpiecex + x].get() != nullptr) return true;
+            }
+        } else {
+            for (int x = -1; x > xshift; x--) {
+                if (board[firstpiecey][firstpiecex + x].get() != nullptr) return true;
+            }
+        }
+    } else if (xshift == yshift) {
+        if (xshift > 0) {
+            for (int i = 1; i < xshift; i++) {
+                if (board[firstpiecey + i][firstpiecex + i] != nullptr) return true;
+            }
+        } else  {
+            for (int i = -1; i > xshift; i--) {
+                if (board[firstpiecey + i][firstpiecex + i] != nullptr) return true;
+            }
+        }
+    } else if (xshift == -yshift) {
+        if (xshift > 0) {
+            for (int i = 1; i < xshift; i++) {
+                if (board[firstpiecex + i][firstpiecey - i] != nullptr) return true;
+            }
+        } else {
+            for (int i = -1; i > xshift; i++) {
+                if (board[firstpiecex + i][firstpiecey - i] != nullptr) return true;
+            }
+        }
+    } else {
+        return false;
+    }
+}
+
 void ChessBoard::calculateAvailableMoves() {
     int r = 0;
     for (auto &row: board) {
@@ -35,19 +81,12 @@ void ChessBoard::calculateAvailableMoves() {
             if (col != nullptr) {
                 std::vector<Vec> potentialmoves = col->getPotentialMoves();
                 for (auto m: potentialmoves) {
-                    if (inrange(r + m.y, c + m.x)) {
-                        if (board[r + m.y][c + m.x] == nullptr) {
-                            if (m.x == 0 || m.y == 0 || m.x == m.y) {
-                                // do something --> loop through the positions
-                                if (m.x == m.y) {
-                                    
-                                }
-                            } else {
-                                board[r][c]->availableMoves.emplace_back(intPairToRankFile(r + m.y, c + m.x));
-                            }
-                        } else if (board[r][c]->colour != board[r + m.y][c + m.x]->colour) {
-                            // code
-                        }
+                    if (!inrange(c + m.y, r + m.x)) continue;
+                    if (board[r + m.y][c + m.x] != nullptr && board[r][c]->getColour() == board[r + m.y][c + m.x]->getColour()) continue;
+                    if (isBlocked(r, c, r + m.y, m.x)) continue;
+                    board[r][c]->addAvailableMove(intPairToRankFile(c + m.y, r + m.x));
+                    if (board[c + m.y][r + m.x].get() != nullptr) {
+                        board[r][c]->addTarget(intPairToRankFile(c + m.y, r + m.x));
                     }
                 }
             }

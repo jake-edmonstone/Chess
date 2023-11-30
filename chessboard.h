@@ -27,6 +27,8 @@ class ChessBoard {
  public:
   // ChessBoard ctor, takes a string to signify how it should be set up: "default" means official chess "empty" means empty
   ChessBoard(std::string config);
+  // determines whether or not a Piece is blocked by another Piece from moving by (xshift, yshift)
+  bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift);
   // ChessBoard copy ctor (deep copy)
   ChessBoard(const ChessBoard &other);
   // updates each pieces fields (threats, targets, availaible moves)
