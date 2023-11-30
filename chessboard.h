@@ -9,12 +9,16 @@
 class ChessBoard {
   // A 2D vector of unique_ptrs to pieces
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
+  std::vector<AbstractPiece*> whitePieces;
+  std::vector<AbstractPiece*> blackPieces;
   // Checks if a pair (r,c) is within board limits
   bool inrange(int r, int c);
   // swicthes between eg. e4 -> 3,4
   int rankFileToIntPair(std::string rf);
   // inverse of previous
   std::string intPairToRankFile(int row, int col);
+  // update list of owned pieces
+  void updatePieceLists();
  public:
   // ChessBoard ctor, takes a string to signify how it should be set up: "default" means official chess "empty" means empty
   ChessBoard(std::string config);

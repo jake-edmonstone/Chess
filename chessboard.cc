@@ -76,6 +76,7 @@ ChessBoard::ChessBoard(string config) {
     board[7][7] = make_unique<Rook>("black");
     for (int i = 0; i < 8; ++i) board[6][i] = make_unique<BlackPawn>("black");
   }
+  updatePieceLists();
 }
 ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
   for (int i = 0; i < 8; ++i) {
@@ -85,8 +86,30 @@ ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
       }
     }
   }
+  updatePieceLists();
 }
-
+void ChessBoard::updatePieceLists() {
+  blackPieces.resize(0);
+  whitePieces.resize(0);
+  for (const auto &i: board) {
+    for (const auto &j: i) {
+      if (j) {
+        if (j->getColour() == "white") whitePieces.emplace_back(j.get());
+        else if (j->getColour() == "black") blackPieces.emplace_back(j.get());
+      }
+    }
+  }
+}
+bool ChessBoard::isCheck(string colour) {
+  for (const auto &i: board) {
+    for (const auto &j : i) {
+      if (j->getName() == "king" && j->getColour() == colour) {
+        if (j->threats.empty()) return false;
+        else return true;
+      }
+    }
+  }
+}
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
   char sym;
   for (const auto &i: chessboard.board) {
