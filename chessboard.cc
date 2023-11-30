@@ -53,10 +53,10 @@ void ChessBoard::calculateAvailableMoves() {
 }
 
 ChessBoard::ChessBoard(string config) {
-  board.resize(8);
-  for (auto &i: board) i.resize(8);
+  board.resize(8); // makes 8 rows
+  for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
   if (config == "empty") return;
-  if (config == "default") {
+  if (config == "default") { // official board setup
     board[0][0] = make_unique<Rook>("white");
     board[0][1] = make_unique<Knight>("white");
     board[0][2] = make_unique<Bishop>("white");
@@ -78,7 +78,7 @@ ChessBoard::ChessBoard(string config) {
   }
 }
 
-std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) {
+std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
   char sym;
   for (const auto &i: chessboard.board) {
     for (const auto &j: i) {
@@ -92,7 +92,7 @@ std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) {
       else if (j->getName() == "king") sym = 'k';
       else if (j->getName() == "queen") sym = 'q';
       else if (j->getName() == "blackpawn" || j->getName() == "whitepawn") sym = 'p';
-      if (j->getColour() == "white") out << toupper(sym);
+      if (j->getColour() == "white") out << static_cast<char>(toupper(sym)); // White pieces are uppercase
       else out << sym;
     }
     cout << endl;

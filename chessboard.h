@@ -7,7 +7,9 @@
 #include "abstractpiece.h"
 
 class ChessBoard {
+  // A 2D vector of unique_ptrs to pieces
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
+  // Checks if a pair (r,c) is within board limits
   bool inrange(int r, int c);
   int rankFileToIntPair(std::string rf);
   std::string intPairToRankFile(int row, int col);
