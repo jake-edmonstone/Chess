@@ -24,7 +24,10 @@ string ChessBoard::intPairToRankFile(int row, int col) {
 }
 
 pair<int,int> ChessBoard::rankFileToIntPair(string rf) {
-    ;
+    char first = rf[0];
+    int col = first - 65;
+    int row = rf[1];
+    return pair<int, int>(row, col);
 }
 
 bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) {
@@ -68,9 +71,8 @@ bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xsh
                 if (board[firstpiecex + i][firstpiecey - i] != nullptr) return true;
             }
         }
-    } else {
-        return false;
     }
+    return false;
 }
 
 void ChessBoard::calculateAvailableMoves() {
