@@ -18,6 +18,6 @@ class ChessBoard {
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };
 
-std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
+std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard);
 
 #endif
