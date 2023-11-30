@@ -5,4 +5,7 @@
 int main() {
   ChessBoard cb {"default"};
   std::cout<<cb;
+
+  ChessBoard cb2 {cb};
+  std::cout<<cb2;
 }

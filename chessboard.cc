@@ -77,6 +77,15 @@ ChessBoard::ChessBoard(string config) {
     for (int i = 0; i < 8; ++i) board[6][i] = make_unique<BlackPawn>("black");
   }
 }
+ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
+  for (int i = 0; i < 8; ++i) {
+    for (int j = 0; j < 8; ++j) {
+      if (other.board[i][j]) {
+        board[i][j] = other.board[i][j]->clone();
+      }
+    }
+  }
+}
 
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
   char sym;

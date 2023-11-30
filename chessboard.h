@@ -11,10 +11,16 @@ class ChessBoard {
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
   // Checks if a pair (r,c) is within board limits
   bool inrange(int r, int c);
+  // swicthes between eg. e4 -> 3,4
   int rankFileToIntPair(std::string rf);
+  // inverse of previous
   std::string intPairToRankFile(int row, int col);
  public:
+  // ChessBoard ctor, takes a string to signify how it should be set up: "default" means official chess "empty" means empty
   ChessBoard(std::string config);
+  // ChessBoard copy ctor (deep copy)
+  ChessBoard(const ChessBoard &other);
+  // updates each pieces fields (threats, targets, availaible moves)
   void calculateAvailableMoves();
   bool isCheck(std::string colour);
   bool isCheckMate(std::string colour);

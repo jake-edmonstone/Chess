@@ -1,4 +1,5 @@
 #include "abstractpiece.h"
+#include <memory>
 using namespace std;
 
 AbstractPiece::AbstractPiece(string colour): colour{colour} {}
@@ -70,3 +71,25 @@ Knight::Knight(string colour): AbstractPiece{colour} {}
 Bishop::Bishop(string colour): AbstractPiece{colour} {}
 BlackPawn::BlackPawn(string colour): AbstractPiece{colour} {}
 WhitePawn::WhitePawn(string colour): AbstractPiece{colour} {}
+
+unique_ptr<AbstractPiece> King::clone() const {
+  return std::make_unique<King>(*this);
+}
+unique_ptr<AbstractPiece> Queen::clone() const {
+  return std::make_unique<Queen>(*this);
+}
+unique_ptr<AbstractPiece> Rook::clone() const {
+  return std::make_unique<Rook>(*this);
+}
+unique_ptr<AbstractPiece> Knight::clone() const {
+  return std::make_unique<Knight>(*this);
+}
+unique_ptr<AbstractPiece> Bishop::clone() const {
+  return std::make_unique<Bishop>(*this);
+}
+unique_ptr<AbstractPiece> BlackPawn::clone() const {
+  return std::make_unique<BlackPawn>(*this);
+}
+unique_ptr<AbstractPiece> WhitePawn::clone() const {
+  return std::make_unique<WhitePawn>(*this);
+}
