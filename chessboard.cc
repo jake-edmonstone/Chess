@@ -1,8 +1,13 @@
 #include <cctype>
 #include <iostream>
+#include <algorithm>
 #include "chessboard.h"
 
 using namespace std;
+
+template<typename T> bool in(const std::vector<T>& vec, const T& element) {
+
+}
 
 bool ChessBoard::inrange(int r, int c) {
     if (r < 0 || r > 7) return false;
@@ -18,7 +23,7 @@ string ChessBoard::intPairToRankFile(int row, int col) {
     return c;
 }
 
-int ChessBoard::rankFileToIntPair(string rf) {
+pair<int,int> ChessBoard::rankFileToIntPair(string rf) {
     ;
 }
 
@@ -109,6 +114,14 @@ bool ChessBoard::isCheck(string colour) {
       }
     }
   }
+}
+void ChessBoard::move(string start, string end) {
+  auto startCoords = rankFileToIntPair(start);
+  auto endCoords = rankFileToIntPair(end);
+  if (board[startCoords.first][startCoords.second]->availableMoves)
+}
+void ChessBoard::dontCheckYourself() {
+  ;
 }
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
   char sym;
