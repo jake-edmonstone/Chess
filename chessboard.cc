@@ -23,4 +23,12 @@ void ChessBoard::calculateAvailableMoves() {
         }
         ++r;
     }
+ChessBoard::ChessBoard(string config) {
+  board.resize(8);
+  for (auto &i: board) i.resize(8);
+  if (config == "empty") return;
+  if (config == "default") {
+    board[0][0] = make_unique<Rook>();
+    board[0][0] = make_unique<Rook>();
+  }
 }

@@ -9,7 +9,7 @@
 class ChessBoard {
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
  public:
-  ChessBoard();
+  ChessBoard(std::string config);
   void calculateAvailableMoves();
   bool isCheck(std::string colour);
   bool isCheckMate(std::string colour);
