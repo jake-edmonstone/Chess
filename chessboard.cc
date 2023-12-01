@@ -10,95 +10,95 @@ template<typename T> bool in(const vector<T>& vec, const T& element) {
 }
 
 bool ChessBoard::inrange(int r, int c) {
-    if (r < 0 || r > 7) return false;
-    if (c < 0 || c > 7) return false;
-    return true;
+  if (r < 0 || r > 7) return false;
+  if (c < 0 || c > 7) return false;
+  return true;
 }
 
 string ChessBoard::intPairToRankFile(int row, int col) {
-    col += 'a';
-    char ch = col;
-    string c = string(1, ch);
-    c += to_string(row + 1);
-    return c;
+  col += 'a';
+  char ch = col;
+  string c = string(1, ch);
+  c += to_string(row + 1);
+  return c;
 }
 
 pair<int,int> ChessBoard::rankFileToIntPair(string rf) {
-    char first = rf[0];
-    int col = first - 'a';
-    int row = rf[1] - '0';
-    return pair<int, int>(row - 1, col);
+  char first = rf[0];
+  int col = first - 'a';
+  int row = rf[1] - '0';
+  return pair<int, int>(row - 1, col);
 }
 
 bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) {
-    if (xshift == 0) {
-        if (yshift > 0) {
-            for (int y = 1; y < yshift; y++) {
-                if (board[firstpiecey + y][firstpiecex].get() != nullptr) return true;
-            }
-        } else {
-            for (int y = -1; y > yshift; y--) {
-                if (board[firstpiecey + y][firstpiecex].get() != nullptr) return true;
-            }
+  if (xshift == 0) {
+    if (yshift > 0) {
+      for (int y = 1; y < yshift; y++) {
+        if (board[firstpiecey + y][firstpiecex].get() != nullptr) return true;
+      }
+    } else {
+        for (int y = -1; y > yshift; y--) {
+          if (board[firstpiecey + y][firstpiecex].get() != nullptr) return true;
         }
-    } else if (yshift == 0) {
-        if (xshift > 0) {
-            for (int x = 1; x < xshift; x++) {
-                if (board[firstpiecey][firstpiecex + x].get() != nullptr) return true;
-            }
-        } else {
-            for (int x = -1; x > xshift; x--) {
-                if (board[firstpiecey][firstpiecex + x].get() != nullptr) return true;
-            }
+      }
+  } else if (yshift == 0) {
+      if (xshift > 0) {
+        for (int x = 1; x < xshift; x++) {
+            if (board[firstpiecey][firstpiecex + x].get() != nullptr) return true;
         }
-    } else if (xshift == yshift) {
-        if (xshift > 0) {
-            for (int i = 1; i < xshift; i++) {
-                if (board[firstpiecey + i][firstpiecex + i] != nullptr) return true;
-            }
-        } else  {
-            for (int i = -1; i > xshift; i--) {
-                if (board[firstpiecey + i][firstpiecex + i] != nullptr) return true;
-            }
+      } else {
+          for (int x = -1; x > xshift; x--) {
+            if (board[firstpiecey][firstpiecex + x].get() != nullptr) return true;
+          }
         }
-    } else if (xshift == -yshift) {
-        if (xshift > 0) {
-            for (int i = 1; i < xshift; i++) {
-                if (board[firstpiecey - i][firstpiecex + i] != nullptr) return true;
-            }
-        } else {
-            for (int i = -1; i > xshift; i--) {
-                if (board[firstpiecey - i][firstpiecex + i] != nullptr) return true;
-            }
+  } else if (xshift == yshift) {
+      if (xshift > 0) {
+        for (int i = 1; i < xshift; i++) {
+          if (board[firstpiecey + i][firstpiecex + i] != nullptr) return true;
+        }
+      } else  {
+          for (int i = -1; i > xshift; i--) {
+            if (board[firstpiecey + i][firstpiecex + i] != nullptr) return true;
+          }
+        }
+  } else if (xshift == -yshift) {
+      if (xshift > 0) {
+        for (int i = 1; i < xshift; i++) {
+            if (board[firstpiecey - i][firstpiecex + i] != nullptr) return true;
+        }
+      } else {
+          for (int i = -1; i > xshift; i--) {
+            if (board[firstpiecey - i][firstpiecex + i] != nullptr) return true;
+          }
         }
     }
-    return false;
+  return false;
 }
 
 void ChessBoard::calculateAvailableMoves() {
-    static int count = 0;
-    ++count;
-    cout << count << endl;
-    int r = 0;
-    for (auto &row: board) {
-        int c = 0;
-        for (auto &col: row) {
-            if (col != nullptr) {
-                std::vector<Vec> potentialmoves = col->getPotentialMoves();
-                for (auto m: potentialmoves) {
-                    if (!inrange(r + m.y, c + m.x)) continue;
-                    if (board[r + m.y][c + m.x].get() != nullptr && board[r][c]->getColour() == board[r + m.y][c + m.x]->getColour()) continue;
-                    if (isBlocked(r, c, m.y, m.x)) continue;
-                    board[r][c]->addAvailableMove(intPairToRankFile(r + m.y, c + m.x));
-                    if (board[r + m.y][c + m.x].get() != nullptr) {
-                        board[r][c]->addTarget(intPairToRankFile(r + m.y, c + m.x));
-                    }
-                }
-            }
-            ++c;
+  static int count = 0;
+  ++count;
+  cout << count << endl;
+  int r = 0;
+  for (auto &row: board) {
+    int c = 0;
+    for (auto &col: row) {
+      if (col != nullptr) {
+        std::vector<Vec> potentialmoves = col->getPotentialMoves();
+        for (auto m: potentialmoves) {
+          if (!inrange(r + m.y, c + m.x)) continue;
+          if (board[r + m.y][c + m.x].get() != nullptr && board[r][c]->getColour() == board[r + m.y][c + m.x]->getColour()) continue;
+          if (isBlocked(r, c, m.y, m.x)) continue;
+          board[r][c]->addAvailableMove(intPairToRankFile(r + m.y, c + m.x));
+          if (board[r + m.y][c + m.x].get() != nullptr) {
+            board[r][c]->addTarget(intPairToRankFile(r + m.y, c + m.x));
+          }
         }
-        ++r;
+      }
+          ++c;
     }
+      ++r;
+  }
   int i = 0;
   for (auto &row: board) {
     int j = 0;
@@ -185,9 +185,9 @@ bool ChessBoard::movePiece(string start, string end) {
   if (in(board[startCoords.first][startCoords.second]->availableMoves, end)) { // if end is in the available moves of the piece at start
     board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
     board[startCoords.first][startCoords.second] = nullptr;
+    calculateAvailableMoves();
     return true;
   } else return false;
-  calculateAvailableMoves();
 }
 
 void ChessBoard::dontCheckYourself() {

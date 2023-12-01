@@ -22,7 +22,6 @@ class AbstractPiece {
   void addTarget(std::string target);
   void addThreat(std::string threat);
   std::string getColour(); 
-
   friend class ChessBoard;
 };
 
