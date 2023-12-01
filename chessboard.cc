@@ -173,6 +173,7 @@ bool ChessBoard::isCheck(string colour) {
       }
     }
   }
+  return false;
 }
 bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
