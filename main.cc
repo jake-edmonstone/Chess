@@ -10,7 +10,9 @@ int main() {
   while (true) { 
     std::string start, end;
     std::cin >> start >> end; 
-    cb.movePiece(start, end); 
+    cb.movePiece(start, end);
+    cb.dontCheckYourself();
+    cb.getOutOfCheck();
     std::cout << cb;
   } 
 }

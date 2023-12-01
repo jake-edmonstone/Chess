@@ -84,6 +84,9 @@ void ChessBoard::calculateAvailableMoves() {
     int c = 0;
     for (auto &col: row) {
       if (col != nullptr) {
+        col->availableMoves.clear();
+        col->targets.clear();
+        col->threats.clear();
         std::vector<Vec> potentialmoves = col->getPotentialMoves();
         for (auto m: potentialmoves) {
           if (!inrange(r + m.y, c + m.x)) continue;
@@ -113,8 +116,6 @@ void ChessBoard::calculateAvailableMoves() {
     }
     i++;
   }
-  dontCheckYourself();
-  getOutOfCheck();
 }
 
 ChessBoard::ChessBoard(string config) {
