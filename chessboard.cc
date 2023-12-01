@@ -187,7 +187,7 @@ bool ChessBoard::movePiece(string start, string end) {
     board[startCoords.first][startCoords.second] = nullptr;
     calculateAvailableMoves();
     return true;
-  } else return false;
+  } else { return false; }
 }
 
 void ChessBoard::dontCheckYourself() {
