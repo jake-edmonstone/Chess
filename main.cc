@@ -3,18 +3,11 @@
 #include "chessboard.h"
 
 int main() {
-  ChessBoard cb {"default"};
-  std::cout << cb;
-  
-  while (true) { 
-    std::string start, end;
-    std::cin >> start >> end; 
+  ChessBoard cb { "default" };
+  std::string start;
+  std::string end;
+  while (std::cin >> start >> end) {
     cb.movePiece(start, end);
-    cb.dontCheckYourself();
-    cb.getOutOfCheck();
-    for (auto &threat: cb.board[6][3]->threats) {
-      std::cout << threat << std::endl;
-    }
-    std::cout << cb;
-  } 
+    std::cout << cb << std::endl;
+  }
 }

@@ -197,15 +197,16 @@ void ChessBoard::dontCheckYourself() {
       auto &piece = board[r][c];
       if (piece) {
         auto originalMoves = piece->availableMoves;
-        piece->availableMoves.clear();
+        vector<string> tempMoves;
         for (const auto &move: originalMoves) {
           ChessBoard tempBoard(*this);
           string start = intPairToRankFile(r, c);
           tempBoard.movePiece(start, move);
           if (!tempBoard.isCheck(piece->getColour())) {
-            piece->availableMoves.emplace_back(move);
+            tempMoves.emplace_back(move);
           }
         }
+        piece->availableMoves = tempMoves;
       }
     }
   }
