@@ -7,6 +7,7 @@
 #include "abstractpiece.h"
 
 class ChessBoard {
+  public:
   // A 2D vector of unique_ptrs to Pieces
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
   // Vectors of raw const pointers to Pieces

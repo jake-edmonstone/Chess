@@ -52,6 +52,8 @@
     "numbers": "cpp",
     "cstring": "cpp",
     "deque": "cpp",
-    "ctime": "cpp"
+    "ctime": "cpp",
+    "map": "cpp",
+    "set": "cpp"
   }
 }

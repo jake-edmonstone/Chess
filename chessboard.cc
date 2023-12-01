@@ -16,18 +16,18 @@ bool ChessBoard::inrange(int r, int c) {
 }
 
 string ChessBoard::intPairToRankFile(int row, int col) {
-    col += 65;
+    col += 'a';
     char ch = col;
-    string c = to_string(ch);
-    c += to_string(row);
+    string c = string(1, ch);
+    c += to_string(row + 1);
     return c;
 }
 
 pair<int,int> ChessBoard::rankFileToIntPair(string rf) {
     char first = rf[0];
-    int col = first - 65;
-    int row = rf[1];
-    return pair<int, int>(row, col);
+    int col = first - 'a';
+    int row = rf[1] - '0';
+    return pair<int, int>(row - 1, col);
 }
 
 bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) {
@@ -85,10 +85,10 @@ void ChessBoard::calculateAvailableMoves() {
                 for (auto m: potentialmoves) {
                     if (!inrange(r + m.y, c + m.x)) continue;
                     if (board[r + m.y][c + m.x].get() != nullptr && board[r][c]->getColour() == board[r + m.y][c + m.x]->getColour()) continue;
-                    if (isBlocked(r, c, r + m.y, c + m.x)) continue;
+                    if (isBlocked(r, c, m.y, m.x)) continue;
                     board[r][c]->addAvailableMove(intPairToRankFile(r + m.y, c + m.x));
                     if (board[r + m.y][c + m.x].get() != nullptr) {
-                        board[r][c]->addTarget(intPairToRankFile(r + m.y, r + m.x));
+                        board[r][c]->addTarget(intPairToRankFile(r + m.y, c + m.x));
                     }
                 }
             }
@@ -96,8 +96,17 @@ void ChessBoard::calculateAvailableMoves() {
         }
         ++r;
     }
-
-    
+  for (auto &row: board) {
+    for (auto &col: row) {
+      if (col == nullptr) continue;
+      for (auto &availabletarget: col->targets) {
+        pair<int, int> target = rankFileToIntPair(availabletarget);
+        board[target.first][target.second]->addThreat(availabletarget);
+      }
+    }
+  }
+  dontCheckYourself();
+  getOutOfCheck();
 }
 
 ChessBoard::ChessBoard(string config) {

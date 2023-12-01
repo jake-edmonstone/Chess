@@ -7,6 +7,7 @@
 #include "vec.h"
 
 class AbstractPiece {
+  public:
   std::vector<std::string> availableMoves;
   std::vector<std::string> targets;
   std::vector<std::string> threats;
@@ -17,10 +18,12 @@ class AbstractPiece {
   virtual ~AbstractPiece() = 0;
   virtual std::vector<Vec> getPotentialMoves() const = 0;
   virtual std::string getName() const = 0;
-  friend class ChessBoard;
   void addAvailableMove(std::string move);
   void addTarget(std::string target);
+  void addThreat(std::string threat);
   std::string getColour(); 
+
+  friend class ChessBoard;
 };
 
 class King: public AbstractPiece {
