@@ -64,11 +64,11 @@ bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xsh
     } else if (xshift == -yshift) {
         if (xshift > 0) {
             for (int i = 1; i < xshift; i++) {
-                if (board[firstpiecex + i][firstpiecey - i] != nullptr) return true;
+                if (board[firstpiecey - i][firstpiecex + i] != nullptr) return true;
             }
         } else {
-            for (int i = -1; i > xshift; i++) {
-                if (board[firstpiecex + i][firstpiecey - i] != nullptr) return true;
+            for (int i = -1; i > xshift; i--) {
+                if (board[firstpiecey - i][firstpiecex + i] != nullptr) return true;
             }
         }
     }
@@ -83,12 +83,12 @@ void ChessBoard::calculateAvailableMoves() {
             if (col != nullptr) {
                 std::vector<Vec> potentialmoves = col->getPotentialMoves();
                 for (auto m: potentialmoves) {
-                    if (!inrange(c + m.y, r + m.x)) continue;
-                    if (board[r + m.y][c + m.x] != nullptr && board[r][c]->getColour() == board[r + m.y][c + m.x]->getColour()) continue;
-                    if (isBlocked(r, c, r + m.y, m.x)) continue;
-                    board[r][c]->addAvailableMove(intPairToRankFile(c + m.y, r + m.x));
-                    if (board[c + m.y][r + m.x].get() != nullptr) {
-                        board[r][c]->addTarget(intPairToRankFile(c + m.y, r + m.x));
+                    if (!inrange(r + m.y, c + m.x)) continue;
+                    if (board[r + m.y][c + m.x].get() != nullptr && board[r][c]->getColour() == board[r + m.y][c + m.x]->getColour()) continue;
+                    if (isBlocked(r, c, r + m.y, c + m.x)) continue;
+                    board[r][c]->addAvailableMove(intPairToRankFile(r + m.y, c + m.x));
+                    if (board[r + m.y][c + m.x].get() != nullptr) {
+                        board[r][c]->addTarget(intPairToRankFile(r + m.y, r + m.x));
                     }
                 }
             }
@@ -96,6 +96,8 @@ void ChessBoard::calculateAvailableMoves() {
         }
         ++r;
     }
+
+    
 }
 
 ChessBoard::ChessBoard(string config) {

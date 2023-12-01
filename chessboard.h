@@ -7,11 +7,11 @@
 #include "abstractpiece.h"
 
 class ChessBoard {
-  // A 2D vector of unique_ptrs to pieces
+  // A 2D vector of unique_ptrs to Pieces
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
-  // Vectors of raw pointers to pieces
-  std::vector<AbstractPiece*> whitePieces;
-  std::vector<AbstractPiece*> blackPieces;
+  // Vectors of raw const pointers to Pieces
+  std::vector<const AbstractPiece*> whitePieces;
+  std::vector<const AbstractPiece*> blackPieces;
   // Checks if a pair (r,c) is within board limits
   bool inrange(int r, int c);
   // swicthes between eg. e4 -> 3,4
