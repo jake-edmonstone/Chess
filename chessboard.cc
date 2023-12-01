@@ -139,6 +139,7 @@ ChessBoard::ChessBoard(string config) {
     for (int i = 0; i < 8; ++i) board[6][i] = make_unique<BlackPawn>("black");
   }
   updatePieceLists();
+  calculateAvailableMoves();
 }
 ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
   for (int i = 0; i < 8; ++i) {
@@ -149,6 +150,7 @@ ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
     }
   }
   updatePieceLists();
+  //calculateAvailableMoves();
 }
 void ChessBoard::updatePieceLists() {
   blackPieces.resize(0);
