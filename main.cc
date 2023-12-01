@@ -5,7 +5,6 @@
 int main() {
   ChessBoard cb {"default"};
   std::cout << cb;
-  cb.calculateAvailableMoves();
   
   while (true) { 
     std::string start, end;
