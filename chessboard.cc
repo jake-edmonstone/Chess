@@ -5,6 +5,11 @@
 
 using namespace std;
 
+void print(vector<string>v) {
+  for (auto &i : v) cout << i << " ";
+  cout << endl;
+}
+
 template<typename T> bool in(const vector<T>& vec, const T& element) {
   return find(vec.begin(), vec.end(), element) != vec.end();
 }
@@ -201,6 +206,10 @@ void ChessBoard::dontCheckYourself() {
         for (const auto &move: originalMoves) {
           ChessBoard tempBoard(*this);
           string start = intPairToRankFile(r, c);
+          cout << "original piece available moves: "; print(piece->availableMoves);
+          cout << "copied piece available moves: "; print(tempBoard.board[r][c]->availableMoves);
+          cout << "start: " << start << endl;
+          cout << "move: " << move << endl;
           tempBoard.movePiece(start, move);
           if (!tempBoard.isCheck(piece->getColour())) {
             tempMoves.emplace_back(move);
