@@ -165,22 +165,26 @@ void ChessBoard::updatePieceLists() {
 bool ChessBoard::isCheck(string colour) {
   for (const auto &i: board) {
     for (const auto &j : i) {
-      if (j->getName() == "king" && j->getColour() == colour) {
-        if (j->threats.empty()) return false;
-        else return true;
+      if (j) {
+        if (j->getName() == "king" && j->getColour() == colour) {
+          if (j->threats.empty()) return false;
+          else return true;
+        }
       }
     }
   }
 }
-void ChessBoard::movePiece(string start, string end) {
+bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
   auto endCoords = rankFileToIntPair(end);
   if (in(board[startCoords.first][startCoords.second]->availableMoves, end)) { // if end is in the available moves of the piece at start
     board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
     board[startCoords.first][startCoords.second] = nullptr;
-  }
+    return true;
+  } else return false;
   calculateAvailableMoves();
 }
+
 void ChessBoard::dontCheckYourself() {
   for (int r = 0; r < 8; ++r) {
     for (int c = 0; c < 8; ++c) {
