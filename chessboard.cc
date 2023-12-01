@@ -206,10 +206,6 @@ void ChessBoard::dontCheckYourself() {
         for (const auto &move: originalMoves) {
           ChessBoard tempBoard(*this);
           string start = intPairToRankFile(r, c);
-          cout << "original piece available moves: "; print(piece->availableMoves);
-          cout << "copied piece available moves: "; print(tempBoard.board[r][c]->availableMoves);
-          cout << "start: " << start << endl;
-          cout << "move: " << move << endl;
           tempBoard.movePiece(start, move);
           if (!tempBoard.isCheck(piece->getColour())) {
             tempMoves.emplace_back(move);
@@ -228,15 +224,16 @@ void ChessBoard::getOutOfCheck() {
         string pieceColour = piece->getColour();
         if (isCheck(pieceColour)) {
           auto originalMoves = piece->availableMoves;
-          piece->availableMoves.clear();
+          vector<string> tmp;
           for (const auto &move : originalMoves) {
             ChessBoard tempBoard(*this);
             string start = intPairToRankFile(r, c); 
             tempBoard.movePiece(start, move);
             if (!tempBoard.isCheck(pieceColour)) {
-              piece->availableMoves.emplace_back(move);
+              tmp.emplace_back(move);
             }
           }
+          piece->availableMoves = tmp;
         }
       }
     }
