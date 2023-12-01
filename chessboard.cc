@@ -96,14 +96,19 @@ void ChessBoard::calculateAvailableMoves() {
         }
         ++r;
     }
+  int i = 0;
   for (auto &row: board) {
+    int j = 0;
     for (auto &col: row) {
-      if (col == nullptr) continue;
-      for (auto &availabletarget: col->targets) {
-        pair<int, int> target = rankFileToIntPair(availabletarget);
-        board[target.first][target.second]->addThreat(availabletarget);
+      if (col != nullptr) {
+        for (auto &availabletarget: col->targets) {
+          pair<int, int> target = rankFileToIntPair(availabletarget);
+          board[target.first][target.second]->addThreat(intPairToRankFile(i, j));
+        }
       }
+      j++;
     }
+    i++;
   }
   dontCheckYourself();
   getOutOfCheck();
