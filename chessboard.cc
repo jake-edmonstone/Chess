@@ -76,6 +76,9 @@ bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xsh
 }
 
 void ChessBoard::calculateAvailableMoves() {
+    static int count = 0;
+    ++count;
+    cout << count << endl;
     int r = 0;
     for (auto &row: board) {
         int c = 0;
@@ -150,7 +153,6 @@ ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
     }
   }
   updatePieceLists();
-  //calculateAvailableMoves();
 }
 void ChessBoard::updatePieceLists() {
   blackPieces.resize(0);
