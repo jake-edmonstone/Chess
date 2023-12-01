@@ -221,7 +221,7 @@ void ChessBoard::getOutOfCheck() {
           piece->availableMoves.clear();
           for (const auto &move : originalMoves) {
             ChessBoard tempBoard(*this);
-            string start = intPairToRankFile(r, c);
+            string start = intPairToRankFile(r, c); 
             tempBoard.movePiece(start, move);
             if (!tempBoard.isCheck(pieceColour)) {
               piece->availableMoves.emplace_back(move);

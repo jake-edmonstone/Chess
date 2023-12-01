@@ -12,6 +12,9 @@ int main() {
     cb.movePiece(start, end);
     cb.dontCheckYourself();
     cb.getOutOfCheck();
+    for (auto &threat: cb.board[6][3]->threats) {
+      std::cout << threat << std::endl;
+    }
     std::cout << cb;
   } 
 }
