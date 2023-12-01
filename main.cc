@@ -9,4 +9,10 @@ int main() {
   cb.calculateAvailableMoves();
   cb.movePiece("c2", "c4");
   std::cout<<cb;
+  while (true) {
+    std::string start, end;
+    std::cin >> start >> end;
+    cb.movePiece(start, end);
+    std::cout << cb << std::endl;
+  }
 }

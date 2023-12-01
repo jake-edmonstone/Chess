@@ -179,6 +179,7 @@ void ChessBoard::movePiece(string start, string end) {
     board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
     board[startCoords.first][startCoords.second] = nullptr;
   }
+  calculateAvailableMoves();
 }
 void ChessBoard::dontCheckYourself() {
   for (int r = 0; r < 8; ++r) {
