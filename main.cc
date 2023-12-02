@@ -15,5 +15,9 @@ int main() {
     cb.dontCheckYourself();
     cb.getOutOfCheck();
     std::cout << cb;
+    if (cb.isCheckMate("white") || cb.isCheckMate("black")) {
+      cout << "checkmate!" << endl;
+      break;
+    } 
   } 
 }

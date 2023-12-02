@@ -81,9 +81,6 @@ bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xsh
 }
 
 void ChessBoard::calculateAvailableMoves() {
-  static int count = 0;
-  ++count;
-  cout << count << endl;
   int r = 0;
   for (auto &row: board) {
     int c = 0;
@@ -185,6 +182,23 @@ bool ChessBoard::isCheck(string colour) {
   }
   return false;
 }
+bool ChessBoard::isCheckMate(string colour) {
+  if (!isCheck(colour)) return false;
+  for (const auto &i : board) {
+    for (const auto &j : i) {
+      if (j) {
+        if (j->getColour() == colour && !j->availableMoves.empty()) {
+          return false;
+        }
+      }
+    }
+  }
+  return true;
+}
+bool ChessBoard::isStaleMate(string colour) {
+  if (isCheck(colour)) return false;
+  // not done
+}
 bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
   auto endCoords = rankFileToIntPair(end);
@@ -241,10 +255,18 @@ void ChessBoard::getOutOfCheck() {
 }
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
   char sym;
+  char col = 'a';
+  int row = 1;
+  out << "  ";
+  for (; col <= 'h'; ++col) {
+    out << col << " ";
+  }
+  out << endl;
   for (const auto &i: chessboard.board) {
+    out << row++ << " ";
     for (const auto &j: i) {
       if (!j) {
-        out << '_';
+        out << '_' << " ";
         continue;
       }
       if (j->getName() == "rook") sym = 'r';
@@ -255,8 +277,9 @@ std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // v
       else if (j->getName() == "blackpawn" || j->getName() == "whitepawn") sym = 'p';
       if (j->getColour() == "white") out << static_cast<char>(toupper(sym)); // White pieces are uppercase
       else out << sym;
+      out << " ";
     }
-    cout << endl;
+    out << endl;
   }
   return out;
 }

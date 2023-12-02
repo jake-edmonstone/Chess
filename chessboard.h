@@ -36,6 +36,7 @@ class ChessBoard {
   void calculateAvailableMoves();
   bool isCheck(std::string colour);
   bool isCheckMate(std::string colour);
+  bool isStaleMate(std::string colour);
   bool movePiece(std::string start, std::string end);
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };
