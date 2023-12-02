@@ -267,6 +267,8 @@ void ChessBoard::getOutOfCheck() {
   }
 }
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
+  int m = 0;
+  int n = 0;
   char sym;
   char col = 'a';
   int row = 1;
@@ -276,10 +278,17 @@ std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // v
   }
   out << endl;
   for (const auto &i: chessboard.board) {
+    ++m;
     out << row++ << " ";
     for (const auto &j: i) {
+      ++n;
       if (!j) {
-        out << '_' << " ";
+        if ((n + m) % 2 == 0) {
+          out << '_';
+        } else {
+          out << ' ';
+        }
+        out << " ";
         continue;
       }
       if (j->getName() == "rook") sym = 'r';
