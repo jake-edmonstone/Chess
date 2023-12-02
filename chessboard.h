@@ -34,10 +34,14 @@ class ChessBoard {
   ChessBoard(const ChessBoard &other);
   // updates each pieces fields (threats, targets, availaible moves)
   void calculateAvailableMoves();
+  // returns whether or not a particular colour is in check
   bool isCheck(std::string colour);
   bool isCheckMate(std::string colour);
   bool isStaleMate(std::string colour);
+  // moves a piece from one location on the board to another; for example, "f3" to "d3"
+  // requires: there exists a piece at start
   bool movePiece(std::string start, std::string end);
+  // prints out a text display of the board with the white pieces on top
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };
 

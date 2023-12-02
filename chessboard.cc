@@ -209,6 +209,7 @@ bool ChessBoard::isCheckMate(string colour) {
 }
 bool ChessBoard::isStaleMate(string colour) {
   if (isCheck(colour)) return false;
+  return true;
   // not done
 }
 bool ChessBoard::movePiece(string start, string end) {

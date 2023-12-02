@@ -7,7 +7,6 @@
 #include "vec.h"
 
 class AbstractPiece {
-  public:
   std::vector<std::string> availableMoves;
   std::vector<std::string> targets;
   std::vector<std::string> threats;
@@ -16,11 +15,18 @@ class AbstractPiece {
  public:
   AbstractPiece(std::string colour);
   virtual ~AbstractPiece() = 0;
+
+  // returns the set of all potential moves a piece can make by virtue of its rank
+  // each potential move is specified by a vector in R^2 indicating the number of squares it can move
+  // in the x-direction followed by the number of squares it can move in the y-direction
   virtual std::vector<Vec> getPotentialMoves() const = 0;
+  // returns the name of the Chess piece. For example, "king"
   virtual std::string getName() const = 0;
+  // add elements to the corresponding vectors
   void addAvailableMove(std::string move);
   void addTarget(std::string target);
   void addThreat(std::string threat);
+  // obtains the colour of the piece
   std::string getColour(); 
   friend class ChessBoard;
 };
