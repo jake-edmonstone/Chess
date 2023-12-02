@@ -94,6 +94,17 @@ void ChessBoard::calculateAvailableMoves() {
           if (!inrange(r + m.y, c + m.x)) continue;
           if (board[r + m.y][c + m.x].get() != nullptr && board[r][c]->getColour() == board[r + m.y][c + m.x]->getColour()) continue;
           if (isBlocked(r, c, m.y, m.x)) continue;
+          if (col->getName() == "whitepawn" || col->getName() == "blackpawn") {
+            if (m.y == 2 || m.y == -2) {
+              if (col->getName() == "whitepawn" && r != 1) continue;
+              if (col->getName() == "blackpawn" && r != 6) continue;
+            }
+            if (m.x == 0) {
+              if (board[r + m.y][c + m.x] != nullptr) continue;
+            } else {
+              if (board[r + m.y][c + m.x] == nullptr) continue;
+            }
+          }
           board[r][c]->addAvailableMove(intPairToRankFile(r + m.y, c + m.x));
           if (board[r + m.y][c + m.x].get() != nullptr) {
             board[r][c]->addTarget(intPairToRankFile(r + m.y, c + m.x));
@@ -118,6 +129,7 @@ void ChessBoard::calculateAvailableMoves() {
     }
     i++;
   }
+
 }
 
 ChessBoard::ChessBoard(string config) {
