@@ -129,7 +129,7 @@ void ChessBoard::calculateAvailableMoves() {
     }
     i++;
   }
-
+  updatePieceLists();
 }
 
 ChessBoard::ChessBoard(string config) {
@@ -137,29 +137,31 @@ ChessBoard::ChessBoard(string config) {
   for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
   if (config == "empty") return;
   if (config == "default") { // official board setup
-    board[0][0] = make_unique<Rook>("white");
-    board[0][1] = make_unique<Knight>("white");
-    board[0][2] = make_unique<Bishop>("white");
-    board[0][3] = make_unique<Queen>("white");
-    board[0][4] = make_unique<King>("white");
-    board[0][5] = make_unique<Bishop>("white");
-    board[0][6] = make_unique<Knight>("white");
-    board[0][7] = make_unique<Rook>("white");
-    for (int i = 0; i < 8; ++i) board[1][i] = make_unique<WhitePawn>("white");
-    board[7][0] = make_unique<Rook>("black");
-    board[7][1] = make_unique<Knight>("black");
-    board[7][2] = make_unique<Bishop>("black");
-    board[7][3] = make_unique<Queen>("black");
-    board[7][4] = make_unique<King>("black");
-    board[7][5] = make_unique<Bishop>("black");
-    board[7][6] = make_unique<Knight>("black");
-    board[7][7] = make_unique<Rook>("black");
-    for (int i = 0; i < 8; ++i) board[6][i] = make_unique<BlackPawn>("black");
+    board[0][0] = make_unique<Rook>("white", intPairToRankFile(0,0));
+    board[0][1] = make_unique<Knight>("white", intPairToRankFile(0,1));
+    board[0][2] = make_unique<Bishop>("white", intPairToRankFile(0,2));
+    board[0][3] = make_unique<Queen>("white", intPairToRankFile(0,3));
+    board[0][4] = make_unique<King>("white", intPairToRankFile(0,4));
+    board[0][5] = make_unique<Bishop>("white", intPairToRankFile(0,5));
+    board[0][6] = make_unique<Knight>("white", intPairToRankFile(0,6));
+    board[0][7] = make_unique<Rook>("white", intPairToRankFile(0,7));
+    for (int i = 0; i < 8; ++i) board[1][i] = make_unique<WhitePawn>("white", intPairToRankFile(1,i));
+    board[7][0] = make_unique<Rook>("black", intPairToRankFile(7,0));
+    board[7][1] = make_unique<Knight>("black", intPairToRankFile(7,1));
+    board[7][2] = make_unique<Bishop>("black", intPairToRankFile(7,2));
+    board[7][3] = make_unique<Queen>("black", intPairToRankFile(7,3));
+    board[7][4] = make_unique<King>("black", intPairToRankFile(7,4));
+    board[7][5] = make_unique<Bishop>("black", intPairToRankFile(7,5));
+    board[7][6] = make_unique<Knight>("black", intPairToRankFile(7,6));
+    board[7][7] = make_unique<Rook>("black", intPairToRankFile(7,7));
+    for (int i = 0; i < 8; ++i) board[6][i] = make_unique<BlackPawn>("black", intPairToRankFile(6,i));
   }
   updatePieceLists();
   calculateAvailableMoves();
 }
 ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
+  blackPieces = other.blackPieces;
+  whitePieces = other.whitePieces;
   for (int i = 0; i < 8; ++i) {
     for (int j = 0; j < 8; ++j) {
       if (other.board[i][j]) {
@@ -167,7 +169,7 @@ ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
       }
     }
   }
-  updatePieceLists();
+  // updatePieceLists();
 }
 void ChessBoard::updatePieceLists() {
   blackPieces.resize(0);
@@ -218,6 +220,7 @@ bool ChessBoard::movePiece(string start, string end) {
   if (in(board[startCoords.first][startCoords.second]->availableMoves, end)) { // if end is in the available moves of the piece at start
     board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
     board[startCoords.first][startCoords.second] = nullptr;
+    board[endCoords.first][endCoords.second]->position = end;
     calculateAvailableMoves();
     return true;
   } else { return false; }

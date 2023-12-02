@@ -2,11 +2,13 @@
 #include <memory>
 using namespace std;
 
-AbstractPiece::AbstractPiece(string colour): colour{colour} {}
+AbstractPiece::AbstractPiece(string colour, string position): colour{colour}, position{position} {}
 
 AbstractPiece::~AbstractPiece() {}
 
 string AbstractPiece::getColour() { return colour; }
+
+string AbstractPiece::getPosition() { return position; };
 
 void AbstractPiece::addAvailableMove(string move) { availableMoves.emplace_back(move); }
 
@@ -70,13 +72,13 @@ string BlackPawn::getName() const {
   return "blackpawn";
 }
 
-King::King(string colour): AbstractPiece{colour} {}
-Queen::Queen(string colour): AbstractPiece{colour} {}
-Rook::Rook(string colour): AbstractPiece{colour} {}
-Knight::Knight(string colour): AbstractPiece{colour} {}
-Bishop::Bishop(string colour): AbstractPiece{colour} {}
-BlackPawn::BlackPawn(string colour): AbstractPiece{colour} {}
-WhitePawn::WhitePawn(string colour): AbstractPiece{colour} {}
+King::King(string colour, string position): AbstractPiece{colour, position} {}
+Queen::Queen(string colour, string position): AbstractPiece{colour, position} {}
+Rook::Rook(string colour, string position): AbstractPiece{colour, position} {}
+Knight::Knight(string colour, string position): AbstractPiece{colour, position} {}
+Bishop::Bishop(string colour, string position): AbstractPiece{colour, position} {}
+BlackPawn::BlackPawn(string colour, string position): AbstractPiece{colour, position} {}
+WhitePawn::WhitePawn(string colour, string position): AbstractPiece{colour, position} {}
 
 unique_ptr<AbstractPiece> King::clone() const {
   return std::make_unique<King>(*this);
