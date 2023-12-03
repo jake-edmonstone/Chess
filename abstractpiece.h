@@ -31,14 +31,22 @@ class AbstractPiece {
   std::string getColour() const; 
   std::string getPosition() const;
   const std::vector<std::string> &getAvailableMoves() const;
+  std::string getColour(); 
+  virtual bool isCastleable() const;
+  virtual void setCastleable(bool value);
+  virtual bool isEnPassantable() const;
+  virtual void setEnPassantable(bool value);
   friend class ChessBoard;
 };
 
 class King: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
+  bool Castleable = true;
  public:
   King(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
+  bool isCastleable() const override;
+  void setCastleable(bool value) override;
   std::string getName() const override;
 };
 class Queen: public AbstractPiece {
@@ -50,9 +58,12 @@ class Queen: public AbstractPiece {
 };
 class Rook: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
+  bool Castleable = true;
  public:
   Rook(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
+  bool isCastleable() const override;
+  void setCastleable(bool value) override;
   std::string getName() const override;
 };
 class Knight: public AbstractPiece {
@@ -71,17 +82,23 @@ class Bishop: public AbstractPiece {
 };
 class WhitePawn: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
+  bool enPassantable = false;
  public:
   WhitePawn(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  bool isEnPassantable() const override;
+  void setEnPassantable(bool value) override;
 };
 class BlackPawn: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
+  bool enPassantable = false;
  public:
   BlackPawn(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  bool isEnPassantable() const override;
+  void setEnPassantable(bool value) override;
 };
 
 #endif

@@ -103,3 +103,27 @@ unique_ptr<AbstractPiece> BlackPawn::clone() const {
 unique_ptr<AbstractPiece> WhitePawn::clone() const {
   return std::make_unique<WhitePawn>(*this);
 }
+
+bool AbstractPiece::isCastleable() const { return false; }
+
+void AbstractPiece::setCastleable(bool value) { ; }
+
+bool King::isCastleable() const { return Castleable; }
+
+void King::setCastleable(bool value) { Castleable = value; }
+
+bool Rook::isCastleable() const { return Castleable; }
+
+void Rook::setCastleable(bool value) { Castleable = value; }
+
+bool AbstractPiece::isEnPassantable() const { return false; }
+
+void AbstractPiece::setEnPassantable(bool value) { ; }
+
+bool WhitePawn::isEnPassantable() const { return enPassantable; }
+
+void WhitePawn::setEnPassantable(bool value) { enPassantable = value; } 
+
+bool BlackPawn::isEnPassantable() const { return enPassantable; }
+
+void BlackPawn::setEnPassantable(bool value) { enPassantable = value; }

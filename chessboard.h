@@ -28,6 +28,8 @@ class ChessBoard {
   void dontCheckYourself();
   // called by calculate moves to make sure you get out of check if you are in it
   void getOutOfCheck();
+  // Adds available moves based on each piece's potential moves, implementing standard Pawn capture and movement
+  void basicAddAvailableMoves();
  public:
   // ChessBoard default ctor, makes an empty board
   ChessBoard();
@@ -64,6 +66,9 @@ class ChessBoard {
   // prints out a text display of the board with the white pieces on top
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };
+
+template<typename T> bool in(const std::vector<T>& vec, const T& element);
+template<typename T> bool myRemove(std::vector<T>& vec, const T& element);
 
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard);
 
