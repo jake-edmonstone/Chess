@@ -4,6 +4,7 @@
 #include "chessboard.h"
 
 class AbstractPlayer {
+ protected:
   const ChessBoard *cb;
   std::string colour;
  public:

@@ -6,9 +6,11 @@ AbstractPiece::AbstractPiece(string colour, string position): colour{colour}, po
 
 AbstractPiece::~AbstractPiece() {}
 
-string AbstractPiece::getColour() { return colour; }
+string AbstractPiece::getColour() const { return colour; }
 
-string AbstractPiece::getPosition() { return position; };
+string AbstractPiece::getPosition() const { return position; };
+
+const vector<string> &AbstractPiece::getAvailableMoves() const { return availableMoves; }
 
 void AbstractPiece::addAvailableMove(string move) { availableMoves.emplace_back(move); }
 

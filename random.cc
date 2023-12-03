@@ -13,9 +13,3 @@ int randInt(int a) {
   }
   return rand() % (a + 1);
 }
-
-template <typename T> T getRandomElement(const vector<T> &vec) {
-  if (vec.empty()) throw out_of_range("cannot randomly select from empty vector");
-  int index = vec.size() - 1;
-  return vec[index];
-}

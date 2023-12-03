@@ -211,8 +211,16 @@ bool ChessBoard::isCheckMate(string colour) {
 }
 bool ChessBoard::isStaleMate(string colour) {
   if (isCheck(colour)) return false;
+  for (const auto &i : board) {
+    for (const auto &j : i) {
+      if (j) {
+        if (j->getColour() == colour && !j->availableMoves.empty()) {
+          return false;
+        }
+      }
+    }
+  }
   return true;
-  // not done
 }
 bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
@@ -269,6 +277,13 @@ void ChessBoard::getOutOfCheck() {
     }
   }
 }
+const vector<const AbstractPiece*> &ChessBoard::getPieces(string colour) {
+  if (colour == "white") return whitePieces;
+  else if (colour == "black") return blackPieces;
+  throw runtime_error("trying to get pieces of neither black or white");
+  return whitePieces;
+}
+
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
   int m = 0;
   int n = 0;

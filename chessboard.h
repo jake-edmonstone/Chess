@@ -41,6 +41,8 @@ class ChessBoard {
   // moves a piece from one location on the board to another; for example, "f3" to "d3"
   // requires: there exists a piece at start
   bool movePiece(std::string start, std::string end);
+  // returns a const ref to the list of colour's pieces
+  const std::vector<const AbstractPiece*> &getPieces(std::string colour); 
   // prints out a text display of the board with the white pieces on top
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };

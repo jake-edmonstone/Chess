@@ -7,6 +7,10 @@
 int randInt(int a);
 
 // getRandomElement(vec) returns a random element from the vector
-template <typename T> T getRandomElement(const std::vector<T> &vec);
+template <typename T> T getRandomElement(const std::vector<T> &vec) {
+  if (vec.empty()) throw std::out_of_range("cannot randomly select from empty vector");
+  int index = vec.size() - 1;
+  return vec[index];
+}
 
 #endif

@@ -28,8 +28,9 @@ class AbstractPiece {
   void addTarget(std::string target);
   void addThreat(std::string threat);
   // obtains the colour of the piece
-  std::string getColour(); 
-  std::string getPosition();
+  std::string getColour() const; 
+  std::string getPosition() const;
+  const std::vector<std::string> &getAvailableMoves() const;
   friend class ChessBoard;
 };
 
