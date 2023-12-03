@@ -14,13 +14,13 @@ template<typename T> bool in(const vector<T>& vec, const T& element) {
   return find(vec.begin(), vec.end(), element) != vec.end();
 }
 
-bool ChessBoard::inrange(int r, int c) {
+bool ChessBoard::inrange(int r, int c) const {
   if (r < 0 || r > 7) return false;
   if (c < 0 || c > 7) return false;
   return true;
 }
 
-string ChessBoard::intPairToRankFile(int row, int col) {
+string ChessBoard::intPairToRankFile(int row, int col) const {
   col += 'a';
   char ch = col;
   string c = string(1, ch);
@@ -28,14 +28,14 @@ string ChessBoard::intPairToRankFile(int row, int col) {
   return c;
 }
 
-pair<int,int> ChessBoard::rankFileToIntPair(string rf) {
+pair<int,int> ChessBoard::rankFileToIntPair(string rf) const {
   char first = rf[0];
   int col = first - 'a';
   int row = rf[1] - '0';
   return pair<int, int>(row - 1, col);
 }
 
-bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) {
+bool ChessBoard::isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) const {
   if (xshift == 0) {
     if (yshift > 0) {
       for (int y = 1; y < yshift; y++) {
@@ -132,34 +132,11 @@ void ChessBoard::calculateAvailableMoves() {
   updatePieceLists();
 }
 
-ChessBoard::ChessBoard(string config) {
+ChessBoard::ChessBoard() {
   board.resize(8); // makes 8 rows
   for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
-  if (config == "empty") return;
-  if (config == "default") { // official board setup
-    board[0][0] = make_unique<Rook>("white", intPairToRankFile(0,0));
-    board[0][1] = make_unique<Knight>("white", intPairToRankFile(0,1));
-    board[0][2] = make_unique<Bishop>("white", intPairToRankFile(0,2));
-    board[0][3] = make_unique<Queen>("white", intPairToRankFile(0,3));
-    board[0][4] = make_unique<King>("white", intPairToRankFile(0,4));
-    board[0][5] = make_unique<Bishop>("white", intPairToRankFile(0,5));
-    board[0][6] = make_unique<Knight>("white", intPairToRankFile(0,6));
-    board[0][7] = make_unique<Rook>("white", intPairToRankFile(0,7));
-    for (int i = 0; i < 8; ++i) board[1][i] = make_unique<WhitePawn>("white", intPairToRankFile(1,i));
-    board[7][0] = make_unique<Rook>("black", intPairToRankFile(7,0));
-    board[7][1] = make_unique<Knight>("black", intPairToRankFile(7,1));
-    board[7][2] = make_unique<Bishop>("black", intPairToRankFile(7,2));
-    board[7][3] = make_unique<Queen>("black", intPairToRankFile(7,3));
-    board[7][4] = make_unique<King>("black", intPairToRankFile(7,4));
-    board[7][5] = make_unique<Bishop>("black", intPairToRankFile(7,5));
-    board[7][6] = make_unique<Knight>("black", intPairToRankFile(7,6));
-    board[7][7] = make_unique<Rook>("black", intPairToRankFile(7,7));
-    for (int i = 0; i < 8; ++i) board[6][i] = make_unique<BlackPawn>("black", intPairToRankFile(6,i));
-  }
-  updatePieceLists();
-  calculateAvailableMoves();
 }
-ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
+ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard() {
   blackPieces = other.blackPieces;
   whitePieces = other.whitePieces;
   for (int i = 0; i < 8; ++i) {
@@ -169,7 +146,33 @@ ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard{"empty"} {
       }
     }
   }
-  // updatePieceLists();
+}
+void ChessBoard::clear() {
+  board.resize(0);
+  board.resize(8); // makes 8 rows
+  for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
+}
+void ChessBoard::defaultSetup() {
+  board[0][0] = make_unique<Rook>("white", intPairToRankFile(0,0));
+  board[0][1] = make_unique<Knight>("white", intPairToRankFile(0,1));
+  board[0][2] = make_unique<Bishop>("white", intPairToRankFile(0,2));
+  board[0][3] = make_unique<Queen>("white", intPairToRankFile(0,3));
+  board[0][4] = make_unique<King>("white", intPairToRankFile(0,4));
+  board[0][5] = make_unique<Bishop>("white", intPairToRankFile(0,5));
+  board[0][6] = make_unique<Knight>("white", intPairToRankFile(0,6));
+  board[0][7] = make_unique<Rook>("white", intPairToRankFile(0,7));
+  for (int i = 0; i < 8; ++i) board[1][i] = make_unique<WhitePawn>("white", intPairToRankFile(1,i));
+  board[7][0] = make_unique<Rook>("black", intPairToRankFile(7,0));
+  board[7][1] = make_unique<Knight>("black", intPairToRankFile(7,1));
+  board[7][2] = make_unique<Bishop>("black", intPairToRankFile(7,2));
+  board[7][3] = make_unique<Queen>("black", intPairToRankFile(7,3));
+  board[7][4] = make_unique<King>("black", intPairToRankFile(7,4));
+  board[7][5] = make_unique<Bishop>("black", intPairToRankFile(7,5));
+  board[7][6] = make_unique<Knight>("black", intPairToRankFile(7,6));
+  board[7][7] = make_unique<Rook>("black", intPairToRankFile(7,7));
+  for (int i = 0; i < 8; ++i) board[6][i] = make_unique<BlackPawn>("black", intPairToRankFile(6,i));
+  updatePieceLists();
+  calculateAvailableMoves();
 }
 void ChessBoard::updatePieceLists() {
   blackPieces.resize(0);
@@ -183,7 +186,7 @@ void ChessBoard::updatePieceLists() {
     }
   }
 }
-bool ChessBoard::isCheck(string colour) {
+bool ChessBoard::isCheck(string colour) const {
   for (const auto &i: board) {
     for (const auto &j : i) {
       if (j) {
@@ -196,7 +199,7 @@ bool ChessBoard::isCheck(string colour) {
   }
   return false;
 }
-bool ChessBoard::isCheckMate(string colour) {
+bool ChessBoard::isCheckMate(string colour) const {
   if (!isCheck(colour)) return false;
   for (const auto &i : board) {
     for (const auto &j : i) {
@@ -209,7 +212,7 @@ bool ChessBoard::isCheckMate(string colour) {
   }
   return true;
 }
-bool ChessBoard::isStaleMate(string colour) {
+bool ChessBoard::isStaleMate(string colour) const {
   if (isCheck(colour)) return false;
   for (const auto &i : board) {
     for (const auto &j : i) {
@@ -230,6 +233,7 @@ bool ChessBoard::movePiece(string start, string end) {
     board[startCoords.first][startCoords.second] = nullptr;
     board[endCoords.first][endCoords.second]->position = end;
     calculateAvailableMoves();
+    updatePieceLists();
     return true;
   } else { return false; }
 }
@@ -277,11 +281,32 @@ void ChessBoard::getOutOfCheck() {
     }
   }
 }
-const vector<const AbstractPiece*> &ChessBoard::getPieces(string colour) {
+const vector<const AbstractPiece*> &ChessBoard::getPieces(string colour) const {
   if (colour == "white") return whitePieces;
   else if (colour == "black") return blackPieces;
   throw runtime_error("trying to get pieces of neither black or white");
   return whitePieces;
+}
+
+void ChessBoard::placePiece(char type, string square) {
+  pair<int, int> pos = rankFileToIntPair(square);
+  if (type == 'R') board[pos.first][pos.second] = make_unique<Rook>("white", square);
+  else if (type == 'N') board[pos.first][pos.second] = make_unique<Knight>("white", square);
+  else if (type == 'B') board[pos.first][pos.second] = make_unique<Bishop>("white", square);
+  else if (type == 'Q') board[pos.first][pos.second] = make_unique<Queen>("white", square);
+  else if (type == 'K') board[pos.first][pos.second] = make_unique<King>("white", square);
+  else if (type == 'P') board[pos.first][pos.second] = make_unique<WhitePawn>("white", square);
+  else if (type == 'r') board[pos.first][pos.second] = make_unique<Rook>("black", square);
+  else if (type == 'n') board[pos.first][pos.second] = make_unique<Knight>("black", square);
+  else if (type == 'b') board[pos.first][pos.second] = make_unique<Bishop>("black", square);
+  else if (type == 'q') board[pos.first][pos.second] = make_unique<Queen>("black", square);
+  else if (type == 'k') board[pos.first][pos.second] = make_unique<King>("black", square);
+  else if (type == 'p') board[pos.first][pos.second] = make_unique<BlackPawn>("black", square);
+}
+
+void ChessBoard::removePiece(string square) {
+  pair<int, int> pos = rankFileToIntPair(square);
+  board[pos.first][pos.second].reset();
 }
 
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board
