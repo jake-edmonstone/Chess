@@ -42,7 +42,7 @@ class ChessBoard {
   bool blackRightCastleOpen() const;
   bool blackLeftCastleOpen() const;
   // Returns if position is being targetted by another piece
-  bool isTarget(string position) const;
+  bool isTarget(std::string position) const;
  public:
   // ChessBoard default ctor, makes an empty board
   ChessBoard();

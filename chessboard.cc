@@ -219,11 +219,12 @@ bool ChessBoard::whiteRightCastleOpen() const {
   if (!king || !rook) return false;
   if (king->getName() == "king" && rook->getName() == "rook" && board[0][5] == nullptr && board[0][6] == nullptr) {
     if (!isTarget(intPairToRankFile(0, 4)) && !isTarget(intPairToRankFile(0, 5)) && !isTarget(intPairToRankFile(0, 6))) {
-      if (king->isEnPassantable() && rook->isEnPassantable()) {
+      if (king->isCastleable() && rook->isCastleable()) {
         return true;
       }
     }
   }
+  return false;
 }
 
 bool ChessBoard::whiteLeftCastleOpen() const {
@@ -232,11 +233,12 @@ bool ChessBoard::whiteLeftCastleOpen() const {
   if (!king || !rook) return false;
   if (king->getName() == "king" && rook->getName() == "rook" && board[0][1] == nullptr && board[0][2] == nullptr && board[0][3] == nullptr) {
     if (!isTarget(intPairToRankFile(0, 2)) && !isTarget(intPairToRankFile(0, 3)) && !isTarget(intPairToRankFile(0, 4))) {
-      if (king->isEnPassantable() && rook->isEnPassantable()) {
+      if (king->isCastleable() && rook->isCastleable()) {
         return true;
       }
     }
   }
+  return false;
 }
 
 bool ChessBoard::blackRightCastleOpen() const {
@@ -245,11 +247,12 @@ bool ChessBoard::blackRightCastleOpen() const {
   if (!king || !rook) return false;
   if (king->getName() == "king" && rook->getName() == "rook" && board[7][5] == nullptr && board[7][6] == nullptr) {
     if (!isTarget(intPairToRankFile(7, 4)) && !isTarget(intPairToRankFile(7, 5)) && !isTarget(intPairToRankFile(7, 6))) {
-      if (king->isEnPassantable() && rook->isEnPassantable()) {
+      if (king->isCastleable() && rook->isCastleable()) {
         return true;
       }
     }
   }
+  return false;
 }
 
 bool ChessBoard::blackLeftCastleOpen() const {
@@ -258,15 +261,15 @@ bool ChessBoard::blackLeftCastleOpen() const {
   if (!king || !rook) return false;
   if (king->getName() == "king" && rook->getName() == "rook" && board[7][1] == nullptr && board[7][2] == nullptr && board[7][3] == nullptr) {
     if (!isTarget(intPairToRankFile(7, 2)) && !isTarget(intPairToRankFile(7, 3)) && !isTarget(intPairToRankFile(7, 4))) {
-      if (king->isEnPassantable() && rook->isEnPassantable()) {
+      if (king->isCastleable() && rook->isCastleable()) {
         return true;
       }
     }
   }
+  return false;
 }
 
 void ChessBoard::addCastlingMoves() {
-  // handles Castling
   if (whiteRightCastleOpen()) {
     board[0][4]->addAvailableMove(intPairToRankFile(0, 6));
     board[0][7]->addAvailableMove(intPairToRankFile(0, 5));
@@ -419,7 +422,7 @@ bool ChessBoard::movePiece(string start, string end) {
   if (in(board[startCoords.first][startCoords.second]->availableMoves, end)) { // if end is in the available moves of the piece at start
     bool capturedDirectly = board[endCoords.first][endCoords.second].get() == nullptr ? false: true;
     AbstractPiece* startpiece = board[startCoords.first][startCoords.second].get();
-    AbstractPiece* endpiece = board[endCoords.first][endCoords.second].get();
+    
     if (startpiece != nullptr && startpiece->getName() == "whitepawn") {
       if (endCoords.first - startCoords.first == 2) { // if the WhitePawn moved two times forward
         startpiece->setEnPassantable(true);
@@ -435,16 +438,18 @@ bool ChessBoard::movePiece(string start, string end) {
     }
     board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
     board[startCoords.first][startCoords.second] = nullptr;
-    
+
     if (startpiece->getName() == "king" && endCoords.second - startCoords.second ==  2) { // right Castle
       board[startCoords.first][startCoords.second + 1] = move(board[endCoords.first][endCoords.second + 1]);
       board[endCoords.first][endCoords.second + 1] = nullptr;
+      board[startCoords.first][startCoords.second + 1]->setCastleable(false);
     }
     if (startpiece->getName() == "king" && startCoords.second - endCoords.second ==  2) { // left Castle
       board[startCoords.first][startCoords.second - 1] = move(board[endCoords.first][endCoords.second - 2]);
       board[endCoords.first][endCoords.second - 2] = nullptr;
+      board[startCoords.first][startCoords.second - 1]->setCastleable(false);
     }
-
+    if (startpiece->getName() == "king" || startpiece->getName() == "rook") { startpiece->setCastleable(false); }
     calculateAvailableMoves();
     updatePieceLists();
     return true;
