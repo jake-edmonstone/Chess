@@ -141,10 +141,10 @@ bool enPassantable(const AbstractPiece * ap, string name) {
 
 
 void ChessBoard::addEnPassantMoves() {
+  int k = 0;
   for (auto &row: board) {
-    int k = 0;
+    int l = 0; 
     for (auto &col: row) {
-      int l = 0; 
       AbstractPiece* left = inrange(k, l - 1) ? board[k][l - 1].get() : nullptr;
       AbstractPiece* right = inrange(k, l + 1) ? board[k][l + 1].get(): nullptr;
       if (enPassantable(col.get(), "whitepawn")) { // Add targets to the Pieces next to it, and add threats to itself
@@ -161,71 +161,39 @@ void ChessBoard::addEnPassantMoves() {
         }
         col->setEnPassantable(false);
       } else if (col.get() != nullptr && col->getName() == "whitepawn") {
-        if (threatens(dynamic_cast<AbstractPiece*>(left), col.get())) {
+        if (left != nullptr && threatens(dynamic_cast<AbstractPiece*>(left), col.get()) && left->getName() == "blackpawn") {
           myRemove(col->threats, intPairToRankFile(k, l - 1));
           myRemove(left->availableMoves, intPairToRankFile(k - 1, l));
           myRemove(left->targets, intPairToRankFile(k - 1, l));
-        } else if (threatens(dynamic_cast<AbstractPiece*>(right), col.get())) {
+        } else if (right != nullptr && threatens(dynamic_cast<AbstractPiece*>(right), col.get()) && right->getName() == "blackpawn") {
           myRemove(col->threats, intPairToRankFile(k, l + 1));
           myRemove(right->availableMoves, intPairToRankFile(k - 1, l));
           myRemove(right->targets, intPairToRankFile(k - 1, l));
         }
       }
 
-
-      if (col != nullptr) {
-        if (col->getName() == "whitepawn") { // handles EnPassant for WhitePawns being captured
-          string pos = intPairToRankFile(k - 1, l);
-          if (col->isEnPassantable()) { // add EnPassant threats to the piece and add it as a target to surrounding ones
-            if (inrange(k, l - 1) && board[k][l - 1] != nullptr && board[k][l - 1]->getName() == "blackpawn") {
-              board[k][l - 1]->addAvailableMove(pos);
-              board[k][l - 1]->addTarget(pos);
-              col->addThreat(intPairToRankFile(k, l - 1));
-            }
-            if (inrange(k, l + 1) && board[k][l + 1] != nullptr && board[k][l + 1]->getName() == "blackpawn") {
-              board[k][l + 1]->addAvailableMove(pos);
-              board[k][l + 1]->addTarget(pos);
-              col->addThreat(intPairToRankFile(k, l + 1));
-            }
-            col->setEnPassantable(false);
-          } else { // remove EnPassant threats from the piece and remove the piece as a target for EnPassant
-            if (inrange(k, l - 1) && board[k][l - 1] != nullptr && board[k][l - 1]->getName() == "blackpawn" && in(col->threats, intPairToRankFile(k, l - 1))) { // if there exists threat next to it
-              myRemove(col->threats, intPairToRankFile(k, l - 1));
-              myRemove(board[k][l-1]->availableMoves, intPairToRankFile(k - 1, l));
-              myRemove(board[k][l-1]->targets, intPairToRankFile(k - 1, l));
-            }
-            if (inrange(k, l+1) && board[k][l + 1] != nullptr && board[k][l + 1]->getName() == "blackpawn" && in(col->threats, intPairToRankFile(k, l + 1))) { // if there exist threat next to it
-              myRemove(col->threats, intPairToRankFile(k, l + 1));
-              myRemove(board[k][l+1]->availableMoves, intPairToRankFile(k - 1, l));
-              myRemove(board[k][l+1]->targets, intPairToRankFile(k - 1, l));
-            }
-          }
-        } else if (col->getName() == "blackpawn") { // handles EnPassant for BlackPawns being captured
-          if (col->isEnPassantable()) {
-            string pos = intPairToRankFile(k + 1, l);
-            if (inrange(k, l - 1) && board[k][l - 1] != nullptr && board[k][l - 1]->getName() == "whitepawn") {
-              board[k][l - 1]->addAvailableMove(pos);
-              board[k][l - 1]->addTarget(pos);
-              col->addThreat(intPairToRankFile(k, l - 1));
-            }
-            if (inrange(k, l + 1) && board[k][l + 1] != nullptr && board[k][l + 1]->getName() == "whitepawn") {
-              board[k][l + 1]->addAvailableMove(pos);
-              board[k][l + 1]->addTarget(pos);
-              col->addThreat(intPairToRankFile(k, l + 1));
-            }
-            col->setEnPassantable(false);
-          } else {
-            if (inrange(k, l-1) && board[k][l - 1] != nullptr && board[k][l - 1]->getName() == "whitepawn" && in(col->threats, intPairToRankFile(k, l - 1))) { 
-              myRemove(col->threats, intPairToRankFile(k, l - 1));
-              myRemove(board[k][l-1]->availableMoves, intPairToRankFile(k + 1, l));
-              myRemove(board[k][l-1]->targets, intPairToRankFile(k + 1, l));
-            }
-            if (inrange(k, l+1) && board[k][l + 1] != nullptr && board[k][l + 1]->getName() == "whitepawn" && in(col->threats, intPairToRankFile(k, l + 1))) {
-              myRemove(col->threats, intPairToRankFile(k, l + 1));
-              myRemove(board[k][l+1]->availableMoves, intPairToRankFile(k + 1, l));
-              myRemove(board[k][l+1]->targets, intPairToRankFile(k + 1, l));
-            }
-          }
+      if (enPassantable(col.get(), "blackpawn")) { // Add targets to the Pieces next to it, and add threats to itself
+        string target = intPairToRankFile(k + 1, l);
+        if (left && left->getName() == "whitepawn") {
+            left->addAvailableMove(target);
+            left->addTarget(target);
+            col->addThreat(intPairToRankFile(k, l - 1));
+        }
+        if (right && right->getName() == "whitepawn") {
+          right->addAvailableMove(target);
+          right->addTarget(target);
+          col->addThreat(intPairToRankFile(k, l + 1));
+        }
+        col->setEnPassantable(false);
+      } else if (col.get() != nullptr && col->getName() == "blackpawn") {
+        if (left != nullptr && threatens(dynamic_cast<AbstractPiece*>(left), col.get()) && left->getName() == "whitepawn") {
+          myRemove(col->threats, intPairToRankFile(k, l - 1));
+          myRemove(left->availableMoves, intPairToRankFile(k + 1, l));
+          myRemove(left->targets, intPairToRankFile(k + 1, l));
+        } else if (right != nullptr && threatens(dynamic_cast<AbstractPiece*>(right), col.get()) && right->getName() == "whitepawn") {
+          myRemove(col->threats, intPairToRankFile(k, l + 1));
+          myRemove(right->availableMoves, intPairToRankFile(k + 1, l));
+          myRemove(right->targets, intPairToRankFile(k + 1, l));
         }
       }
       l++;
@@ -234,12 +202,7 @@ void ChessBoard::addEnPassantMoves() {
   }
 }
 
-void ChessBoard::calculateAvailableMoves() {
-  basicAddAvailableMoves();
-  addThreats();
-  addEnPassantMoves();
-  
-
+void ChessBoard::addCastlingMoves() {
   // handles Castling
   bool whiteCastlingright = true;
   bool whiteCastlingleft = true;
@@ -303,7 +266,15 @@ void ChessBoard::calculateAvailableMoves() {
       }
     }
   }
+  }
+}
 
+void ChessBoard::calculateAvailableMoves() {
+  basicAddAvailableMoves();
+  addThreats();
+  addEnPassantMoves();
+  //addCastlingMoves();
+  
 }
 
 ChessBoard::ChessBoard() {
@@ -418,7 +389,7 @@ bool ChessBoard::isInsufficientMaterial() const {
   return whiteInsufficient && blackInsufficient;
 }
 
-void printElements(vector<int> vec) const {
+void printElements(vector<int> vec) {
   for (auto m: vec) {
     cout << m << endl;
   }
@@ -428,33 +399,24 @@ bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
   auto endCoords = rankFileToIntPair(end);
   if (in(board[startCoords.first][startCoords.second]->availableMoves, end)) { // if end is in the available moves of the piece at start
-    bool capturedDirectly = board[endCoords.first][endCoords.second] == nullptr ? false: true;
-    bool moveMade = false;
-    if (board[endCoords.first][endCoords.second].get() != nullptr && in(board[endCoords.first][endCoords.second]->availableMoves, start)) {
-      if (board[startCoords.first][startCoords.second]->getColour() == board[endCoords.first][endCoords.second]->getColour()) {
-        swap(board[startCoords.first][startCoords.second], board[endCoords.first][endCoords.second]);
-        board[startCoords.first][startCoords.second]->setCastleable(false);
-        board[endCoords.first][endCoords.second]->setCastleable(false);
-        moveMade = true;
-      }
-    }
-    if (!moveMade) {
-      board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
-      board[startCoords.first][startCoords.second] = nullptr;
-    }
-    if (board[endCoords.first][endCoords.second]->getName() == "whitepawn") {
+    bool capturedDirectly = board[endCoords.first][endCoords.second].get() == nullptr ? false: true;
+    AbstractPiece* startpiece = board[startCoords.first][startCoords.second].get();
+    AbstractPiece* endpiece = board[endCoords.first][endCoords.second].get();
+    if (startpiece != nullptr && startpiece->getName() == "whitepawn") {
       if (endCoords.first - startCoords.first == 2) { // if the WhitePawn moved two times forward
-        board[endCoords.first][endCoords.second]->setEnPassantable(true);
+        startpiece->setEnPassantable(true);
       } else if (endCoords.second != startCoords.second && !capturedDirectly) { // if the WhitePawn captured En Passant
         board[endCoords.first - 1][endCoords.second] = nullptr; // capture
       }
-    } else if (board[endCoords.first][endCoords.second]->getName() == "blackpawn") {
+    } else if (startpiece != nullptr && startpiece->getName() == "blackpawn") {
       if (startCoords.first - endCoords.first == 2) { // if the BlackPawn moved two times forward
-        board[endCoords.first][endCoords.second]->setEnPassantable(true);
+        startpiece->setEnPassantable(true);
       } else if (endCoords.second != startCoords.second && !capturedDirectly) { // if the BlackPawn captured En Passant
         board[endCoords.first + 1][endCoords.second] = nullptr; // capture
       }
     }
+    board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
+    board[startCoords.first][startCoords.second] = nullptr;
     calculateAvailableMoves();
     updatePieceLists();
     return true;

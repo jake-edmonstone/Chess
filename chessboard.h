@@ -33,7 +33,9 @@ class ChessBoard {
   // Adds threats to the pieces based on targets stored in each piece
   void addThreats();
   // Adds threats to Pawns that are EnPassantable, as well as adding available moves and targets to pawns that are threats
-  void ChessBoard::addEnPassantMoves();
+  void addEnPassantMoves();
+  // Adds castling moves for all Rooks and Kings is they are Castleable
+  void addCastlingMoves();
  public:
   // ChessBoard default ctor, makes an empty board
   ChessBoard();
@@ -72,7 +74,7 @@ class ChessBoard {
 };
 
 // determines if ap is a valid EnPassantable piece
-bool enPassantable(const AbstractPiece * ap, string name);
+bool enPassantable(const AbstractPiece * ap, std::string name);
 
 template<typename T> bool in(const std::vector<T>& vec, const T& element);
 template<typename T> bool myRemove(std::vector<T>& vec, const T& element);

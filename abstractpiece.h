@@ -7,6 +7,7 @@
 #include "vec.h"
 
 class AbstractPiece {
+  public:
   std::vector<std::string> availableMoves;
   std::vector<std::string> targets;
   std::vector<std::string> threats;
