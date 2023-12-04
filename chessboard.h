@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include "abstractpiece.h"
+#include "graphicsdisplay.h"
 
 class ChessBoard {
   public:
@@ -13,6 +14,8 @@ class ChessBoard {
   // Vectors of raw const pointers to Pieces
   std::vector<const AbstractPiece*> whitePieces;
   std::vector<const AbstractPiece*> blackPieces;
+  // graphics display
+  std::unique_ptr<GraphicsDisplay> gd;
   // Checks if a pair (r,c) is within board limits
   bool inrange(int r, int c) const;
   // swicthes between eg. e4 -> 3,4
@@ -42,6 +45,7 @@ class ChessBoard {
   bool isCheck(std::string colour) const;
   bool isCheckMate(std::string colour) const;
   bool isStaleMate(std::string colour) const;
+  bool isInsufficientMaterial() const;
   // moves a piece from one location on the board to another; for example, "f3" to "d3"
   // requires: there exists a piece at start
   bool movePiece(std::string start, std::string end);
@@ -49,8 +53,14 @@ class ChessBoard {
   const std::vector<const AbstractPiece*> &getPieces(std::string colour) const; 
   // places a piece of type type at position square
   void placePiece(char type, std::string square);
+  // returns the piece at position square
+  const AbstractPiece* getPiece(std::string square) const;
   // removes a piece at position square
   void removePiece(std::string square);
+  // returns true if there is a pawn on the first or last rank
+  bool pawnOnFirstOrLastRank() const;
+  // returns 2d vec of chars corresponding to piece types and positions
+  const std::vector<std::vector<char>> getBoard() const;
   // prints out a text display of the board with the white pieces on top
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };

@@ -133,10 +133,13 @@ void ChessBoard::calculateAvailableMoves() {
 }
 
 ChessBoard::ChessBoard() {
+  gd = make_unique<GraphicsDisplay>(this->getBoard()); 
   board.resize(8); // makes 8 rows
   for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
 }
-ChessBoard::ChessBoard(const ChessBoard &other): ChessBoard() {
+ChessBoard::ChessBoard(const ChessBoard &other) {
+  board.resize(8); // makes 8 rows
+  for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
   blackPieces = other.blackPieces;
   whitePieces = other.whitePieces;
   for (int i = 0; i < 8; ++i) {
@@ -225,6 +228,21 @@ bool ChessBoard::isStaleMate(string colour) const {
   }
   return true;
 }
+bool ChessBoard::isInsufficientMaterial() const {
+  bool whiteInsufficient = false;
+  bool blackInsufficient = false;
+  if (whitePieces.size() == 1) whiteInsufficient = true;
+  if (whitePieces.size() == 2) {
+    if (whitePieces[0]->getName() == "bishop" || whitePieces[1]->getName() == "bishop") whiteInsufficient = true;
+    if (whitePieces[0]->getName() == "knight" || whitePieces[1]->getName() == "knight") whiteInsufficient = true;
+  }
+  if (blackPieces.size() == 1) blackInsufficient = true;
+  if (blackPieces.size() == 2) {
+    if (blackPieces[0]->getName() == "bishop" || blackPieces[1]->getName() == "bishop") blackInsufficient = true;
+    if (blackPieces[0]->getName() == "knight" || blackPieces[1]->getName() == "knight") blackInsufficient = true;
+  }
+  return whiteInsufficient && blackInsufficient;
+}
 bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
   auto endCoords = rankFileToIntPair(end);
@@ -288,6 +306,11 @@ const vector<const AbstractPiece*> &ChessBoard::getPieces(string colour) const {
   return whitePieces;
 }
 
+const AbstractPiece* ChessBoard::getPiece(string square) const {
+  pair<int, int> pos = rankFileToIntPair(square);
+  return board[pos.first][pos.second].get();
+}
+
 void ChessBoard::placePiece(char type, string square) {
   pair<int, int> pos = rankFileToIntPair(square);
   if (type == 'R') board[pos.first][pos.second] = make_unique<Rook>("white", square);
@@ -307,6 +330,46 @@ void ChessBoard::placePiece(char type, string square) {
 void ChessBoard::removePiece(string square) {
   pair<int, int> pos = rankFileToIntPair(square);
   board[pos.first][pos.second].reset();
+}
+
+bool ChessBoard::pawnOnFirstOrLastRank() const {
+  for (int i = 0; i < 8; ++i) {
+    if (board[0][i]) {
+      if (board[0][i]->getName() == "whitepawn" || board[0][i]->getName() == "blackpawn") {
+        return true;
+      }
+    }
+    if (board[7][i]) {
+      if (board[7][i]->getName() == "whitepawn" || board[7][i]->getName() == "blackpawn") {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+const vector<vector<char>> ChessBoard::getBoard() const {
+  static vector<vector<char>> charBoard(8, vector<char>(8, ' ')); // 8x8 chess board
+  int row = 0;
+  for (const auto &i : board) {
+    int col = 0;
+    for (const auto &j : i) {
+      char sym = ((row + col) % 2 == 0) ? '_' : ' '; // default to empty square representation
+      if (j) {
+        if (j->getName() == "rook") sym = 'r';
+        else if (j->getName() == "knight") sym = 'n';
+        else if (j->getName() == "bishop") sym = 'b';
+        else if (j->getName() == "king") sym = 'k';
+        else if (j->getName() == "queen") sym = 'q';
+        else if (j->getName() == "blackpawn" || j->getName() == "whitepawn") sym = 'p';
+        if (j->getColour() == "white") sym = std::toupper(sym); // White pieces are uppercase
+      }
+      charBoard[row][col] = sym;
+      ++col;
+    }
+    ++row;
+  }
+  return charBoard;
 }
 
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // viewing the board

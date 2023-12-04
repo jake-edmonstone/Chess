@@ -42,6 +42,10 @@ pair<string, string> Human::getMove() const {
         cout << "That is not a black piece, but it's black's turn" << endl;
         continue;
       }
+      else if (!in<string>(cb->getPiece(start)->getAvailableMoves(), end)) {
+        cout << "That is not a legal move" << endl;
+        continue;
+      }
       return {start, end};
     }
     else if (command == "resign") {
@@ -58,8 +62,24 @@ pair<string, string> Human::getMove() const {
   throw runtime_error("not a legal move");
   return {"",""};
 }
-
+char Human::getPromotionDecision() const {
+  char decision;
+  while (cin) {
+    cout << "What would you like to promote to?: ";
+    cin >> decision;
+    if (toupper(decision) == 'Q' || toupper(decision) == 'R' || toupper(decision) == 'N' || toupper(decision) == 'B') {
+      return toupper(decision);
+    }
+    else {
+      cout << "Please enter a valid piece" << endl;
+      continue;
+    }
+  }
+  throw runtime_error("bad promotion");
+  return 1;
+}
 Computer1::Computer1(ChessBoard *cb, string colour): AbstractPlayer{cb, colour} {}
+
 pair<string, string> Computer1::getMove() const {
   sleep(2);
   string start, end;
@@ -83,5 +103,9 @@ pair<string, string> Computer1::getMove() const {
   start = piece->getPosition();
   end = getRandomElement<string>(piece->getAvailableMoves());
   return {start, end};
+}
+char Computer1::getPromotionDecision() const {
+  vector<char> pieces {'Q', 'R', 'N', 'B'};
+  return getRandomElement<char>(pieces);
 }
 
