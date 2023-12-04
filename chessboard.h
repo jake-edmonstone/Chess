@@ -36,6 +36,13 @@ class ChessBoard {
   void addEnPassantMoves();
   // Adds castling moves for all Rooks and Kings is they are Castleable
   void addCastlingMoves();
+  // Returns if castling is an option for the X... half of White's side
+  bool whiteRightCastleOpen() const;
+  bool whiteLeftCastleOpen() const;
+  bool blackRightCastleOpen() const;
+  bool blackLeftCastleOpen() const;
+  // Returns if position is being targetted by another piece
+  bool isTarget(string position) const;
  public:
   // ChessBoard default ctor, makes an empty board
   ChessBoard();

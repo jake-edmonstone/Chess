@@ -202,70 +202,89 @@ void ChessBoard::addEnPassantMoves() {
   }
 }
 
+bool ChessBoard::isTarget(string piece) const {
+  for (auto &n: board) {
+    for (auto &m: n) {
+      if (m.get() != nullptr && (in(m->targets, piece))) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool ChessBoard::whiteRightCastleOpen() const {
+  AbstractPiece* king = board[0][4].get();
+  AbstractPiece* rook = board[0][7].get();
+  if (!king || !rook) return false;
+  if (king->getName() == "king" && rook->getName() == "rook" && board[0][5] == nullptr && board[0][6] == nullptr) {
+    if (!isTarget(intPairToRankFile(0, 4)) && !isTarget(intPairToRankFile(0, 5)) && !isTarget(intPairToRankFile(0, 6))) {
+      if (king->isEnPassantable() && rook->isEnPassantable()) {
+        return true;
+      }
+    }
+  }
+}
+
+bool ChessBoard::whiteLeftCastleOpen() const {
+  AbstractPiece* king = board[0][4].get();
+  AbstractPiece* rook = board[0][0].get();
+  if (!king || !rook) return false;
+  if (king->getName() == "king" && rook->getName() == "rook" && board[0][1] == nullptr && board[0][2] == nullptr && board[0][3] == nullptr) {
+    if (!isTarget(intPairToRankFile(0, 2)) && !isTarget(intPairToRankFile(0, 3)) && !isTarget(intPairToRankFile(0, 4))) {
+      if (king->isEnPassantable() && rook->isEnPassantable()) {
+        return true;
+      }
+    }
+  }
+}
+
+bool ChessBoard::blackRightCastleOpen() const {
+  AbstractPiece* king = board[7][4].get();
+  AbstractPiece* rook = board[7][7].get();
+  if (!king || !rook) return false;
+  if (king->getName() == "king" && rook->getName() == "rook" && board[7][5] == nullptr && board[7][6] == nullptr) {
+    if (!isTarget(intPairToRankFile(7, 4)) && !isTarget(intPairToRankFile(7, 5)) && !isTarget(intPairToRankFile(7, 6))) {
+      if (king->isEnPassantable() && rook->isEnPassantable()) {
+        return true;
+      }
+    }
+  }
+}
+
+bool ChessBoard::blackLeftCastleOpen() const {
+  AbstractPiece* king = board[7][4].get();
+  AbstractPiece* rook = board[7][0].get();
+  if (!king || !rook) return false;
+  if (king->getName() == "king" && rook->getName() == "rook" && board[7][1] == nullptr && board[7][2] == nullptr && board[7][3] == nullptr) {
+    if (!isTarget(intPairToRankFile(7, 2)) && !isTarget(intPairToRankFile(7, 3)) && !isTarget(intPairToRankFile(7, 4))) {
+      if (king->isEnPassantable() && rook->isEnPassantable()) {
+        return true;
+      }
+    }
+  }
+}
+
 void ChessBoard::addCastlingMoves() {
   // handles Castling
-  bool whiteCastlingright = true;
-  bool whiteCastlingleft = true;
-  if (board[0][4].get() != nullptr && board[0][4]->getName() == "king" && board[0][4]->getColour() == "white") {
-    if (board[0][7].get() != nullptr && board[0][7]->getName() == "rook" && board[0][7]->getColour() == "white") {
-      if (board[0][5].get() == nullptr && board[0][6].get() == nullptr) {
-        if (board[0][4]->isCastleable() && board[0][7]->isCastleable()) {
-          if (board[0][5].get() == nullptr && board[0][6].get() == nullptr) {
-            for (auto &r: board) {
-              for (auto &c: r) {
-                if (c.get() != nullptr && c->getColour() == "black" && 
-                    (in(c->availableMoves, intPairToRankFile(0, 4)) || 
-                    in(c->availableMoves, intPairToRankFile(0, 5)) ||
-                    in(c->availableMoves, intPairToRankFile(0, 6)))) {
-                  whiteCastlingright = false;
-                }
-                if (c.get() != nullptr && c->getColour() == "black" && 
-                    (in(c->availableMoves, intPairToRankFile(0, 2)) || 
-                    in(c->availableMoves, intPairToRankFile(0, 3)) ||
-                    in(c->availableMoves, intPairToRankFile(0, 4)))) {
-                  whiteCastlingleft = false;
-                }
-                }
-                if (whiteCastlingright) {
-                  board[0][4]->addAvailableMove(intPairToRankFile(0, 6));
-                  board[0][7]->addAvailableMove(intPairToRankFile(0, 5));
-                }
-                if (whiteCastlingleft) {
-                  board[0][4]->addAvailableMove(intPairToRankFile(0, 2));
-                  board[0][0]->addAvailableMove(intPairToRankFile(0, 3));
-                }
-          }
-        }
-      }
-    }
+  if (whiteRightCastleOpen()) {
+    board[0][4]->addAvailableMove(intPairToRankFile(0, 6));
+    board[0][7]->addAvailableMove(intPairToRankFile(0, 5));
   }
-  
 
-  bool blackCastling = true;
-  if (board[7][4].get() != nullptr && board[7][4]->getName() == "king" && board[7][4]->getColour() == "black") {
-    if (board[7][7].get() != nullptr && board[7][7]->getName() == "rook" && board[7][7]->getColour() == "black") {
-      if (board[7][5].get() == nullptr && board[7][6].get() == nullptr) {
-        if (board[7][4]->isCastleable() && board[7][7]->isCastleable()) {
-          if (board[7][5].get() == nullptr && board[7][6].get() == nullptr) {
-            for (auto &r: board) {
-              for (auto &c: r) {
-                if (c.get() != nullptr && c->getColour() == "white" && (in(c->availableMoves, intPairToRankFile(7, 5)) || in(c->availableMoves, intPairToRankFile(7, 6)))) {
-                  blackCastling = false;
-                }
-                if (c.get() != nullptr && c->getColour() == "white" && (in(c->availableMoves, intPairToRankFile(7, 7)))) { // checks if king is threatened after castle
-                  blackCastling = false;
-                }
-              }
-            }
-            if (blackCastling) {
-              board[7][4]->addAvailableMove(intPairToRankFile(7, 7));
-              board[7][7]->addAvailableMove(intPairToRankFile(7, 4));
-            }
-          }
-        }
-      }
-    }
+  if (whiteLeftCastleOpen()) {
+    board[0][0]->addAvailableMove(intPairToRankFile(0, 3));
+    board[0][4]->addAvailableMove(intPairToRankFile(0, 2));
   }
+
+  if (blackRightCastleOpen()) {
+    board[7][4]->addAvailableMove(intPairToRankFile(7, 6));
+    board[7][7]->addAvailableMove(intPairToRankFile(7, 5));
+  }
+
+  if (blackLeftCastleOpen()) {
+    board[7][0]->addAvailableMove(intPairToRankFile(7, 3));
+    board[7][4]->addAvailableMove(intPairToRankFile(7, 2));
   }
 }
 
@@ -273,8 +292,7 @@ void ChessBoard::calculateAvailableMoves() {
   basicAddAvailableMoves();
   addThreats();
   addEnPassantMoves();
-  //addCastlingMoves();
-  
+  addCastlingMoves();
 }
 
 ChessBoard::ChessBoard() {
@@ -417,6 +435,16 @@ bool ChessBoard::movePiece(string start, string end) {
     }
     board[endCoords.first][endCoords.second] = move(board[startCoords.first][startCoords.second]);
     board[startCoords.first][startCoords.second] = nullptr;
+    
+    if (startpiece->getName() == "king" && endCoords.second - startCoords.second ==  2) { // right Castle
+      board[startCoords.first][startCoords.second + 1] = move(board[endCoords.first][endCoords.second + 1]);
+      board[endCoords.first][endCoords.second + 1] = nullptr;
+    }
+    if (startpiece->getName() == "king" && startCoords.second - endCoords.second ==  2) { // left Castle
+      board[startCoords.first][startCoords.second - 1] = move(board[endCoords.first][endCoords.second - 2]);
+      board[endCoords.first][endCoords.second - 2] = nullptr;
+    }
+
     calculateAvailableMoves();
     updatePieceLists();
     return true;
