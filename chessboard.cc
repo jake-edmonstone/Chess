@@ -15,6 +15,14 @@ template<typename T> bool in(const vector<T>& vec, const T& element) {
   return find(vec.begin(), vec.end(), element) != vec.end();
 }
 
+template<typename T> bool myRemove(std::vector<T>& vec, const T& element) {
+  bool removed = false;
+  for (auto it = vec.begin(); it != vec.end(); ) {
+    if (*it == element) { vec.erase(it); removed = true; } else ++it;
+  }
+  return removed;
+}
+
 bool ChessBoard::inrange(int r, int c) const {
   if (r < 0 || r > 7) return false;
   if (c < 0 || c > 7) return false;
@@ -302,6 +310,7 @@ ChessBoard::ChessBoard() {
   gd = make_unique<GraphicsDisplay>(this->getBoard()); 
   board.resize(8); // makes 8 rows
   for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
+  updatePieceLists();
 }
 ChessBoard::ChessBoard(const ChessBoard &other) {
   board.resize(8); // makes 8 rows
@@ -343,6 +352,7 @@ void ChessBoard::defaultSetup() {
   updatePieceLists();
   calculateAvailableMoves();
 }
+
 void ChessBoard::updatePieceLists() {
   blackPieces.resize(0);
   whitePieces.resize(0);
@@ -416,13 +426,24 @@ void printElements(vector<int> vec) {
   }
 }
 
+void ChessBoard::updatePositions() {
+  int r = 0;
+  for (auto& n: board) {
+    int c = 0;
+    for (auto& m: n) {
+      if (m.get()) { m->position = intPairToRankFile(r, c); }
+      c++;
+    }
+    r++;
+  }
+}
+
 bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
   auto endCoords = rankFileToIntPair(end);
   if (in(board[startCoords.first][startCoords.second]->availableMoves, end)) { // if end is in the available moves of the piece at start
     bool capturedDirectly = board[endCoords.first][endCoords.second].get() == nullptr ? false: true;
     AbstractPiece* startpiece = board[startCoords.first][startCoords.second].get();
-    
     if (startpiece != nullptr && startpiece->getName() == "whitepawn") {
       if (endCoords.first - startCoords.first == 2) { // if the WhitePawn moved two times forward
         startpiece->setEnPassantable(true);
@@ -452,6 +473,7 @@ bool ChessBoard::movePiece(string start, string end) {
     if (startpiece->getName() == "king" || startpiece->getName() == "rook") { startpiece->setCastleable(false); }
     calculateAvailableMoves();
     updatePieceLists();
+    updatePositions();
     return true;
   } else { return false; }
 }

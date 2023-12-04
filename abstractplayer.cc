@@ -9,6 +9,10 @@ template<typename T> bool in(const vector<T>& vec, const T& element) {
   return find(vec.begin(), vec.end(), element) != vec.end();
 }
 
+template<typename T> void print(const vector<T>& vec) {
+  for (auto n: vec) { cout << n << " "; } cout << endl;
+}
+
 AbstractPlayer::AbstractPlayer(ChessBoard *cb, string colour): cb{cb}, colour{colour} {}
 AbstractPlayer::~AbstractPlayer() {}
 string AbstractPlayer::getColour() const {

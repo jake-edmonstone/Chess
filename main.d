@@ -1,2 +1,2 @@
-main.o: main.cc random.h chessboard.h abstractpiece.h vec.h \
- graphicsdisplay.h window.h game.h abstractplayer.h
+main.o: main.cc game.h abstractplayer.h chessboard.h abstractpiece.h \
+ vec.h graphicsdisplay.h window.h

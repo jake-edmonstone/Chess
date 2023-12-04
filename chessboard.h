@@ -43,6 +43,8 @@ class ChessBoard {
   bool blackLeftCastleOpen() const;
   // Returns if position is being targetted by another piece
   bool isTarget(std::string position) const;
+  // updates positions of all pieces on the grid
+  void updatePositions();
  public:
   // ChessBoard default ctor, makes an empty board
   ChessBoard();
@@ -57,9 +59,9 @@ class ChessBoard {
   // updates each pieces fields (threats, targets, availaible moves)
   void calculateAvailableMoves();
   // returns whether or not a particular colour is in check
-  bool isCheck(std::string colour) const const;
-  bool isCheckMate(std::string colour) const const;
-  bool isStaleMate(std::string colour) const const;
+  bool isCheck(std::string colour) const;
+  bool isCheckMate(std::string colour) const;
+  bool isStaleMate(std::string colour) const;
   bool isInsufficientMaterial() const;
   // moves a piece from one location on the board to another; for example, "f3" to "d3"
   // requires: there exists a piece at start

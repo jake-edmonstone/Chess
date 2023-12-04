@@ -200,4 +200,3 @@ void Game::play() {
   cout << "White: " << whiteScore << endl;
   cout << "Black: " << blackScore << endl;
 }
-

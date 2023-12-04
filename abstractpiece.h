@@ -32,7 +32,6 @@ class AbstractPiece {
   std::string getColour() const; 
   std::string getPosition() const;
   const std::vector<std::string> &getAvailableMoves() const;
-  std::string getColour(); 
   virtual bool isCastleable() const;
   virtual void setCastleable(bool value);
   virtual bool isEnPassantable() const;

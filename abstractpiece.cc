@@ -8,10 +8,6 @@ template<typename T> bool in(const vector<T>& vec, const T& element) {
 
 AbstractPiece::AbstractPiece(string colour, string position): colour{colour}, position{position} {}
 
-template<typename T> bool in(const vector<T>& vec, const T& element) {
-  return find(vec.begin(), vec.end(), element) != vec.end();
-}
-
 AbstractPiece::~AbstractPiece() {}
 
 string AbstractPiece::getColour() const { return colour; }
