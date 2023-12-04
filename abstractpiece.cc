@@ -2,7 +2,15 @@
 #include <memory>
 using namespace std;
 
+template<typename T> bool in(const vector<T>& vec, const T& element) {
+  return find(vec.begin(), vec.end(), element) != vec.end();
+}
+
 AbstractPiece::AbstractPiece(string colour, string position): colour{colour}, position{position} {}
+
+template<typename T> bool in(const vector<T>& vec, const T& element) {
+  return find(vec.begin(), vec.end(), element) != vec.end();
+}
 
 AbstractPiece::~AbstractPiece() {}
 
@@ -17,6 +25,13 @@ void AbstractPiece::addAvailableMove(string move) { availableMoves.emplace_back(
 void AbstractPiece::addTarget(string target) { targets.emplace_back(target); }
 
 void AbstractPiece::addThreat(string threat) { threats.emplace_back(threat); }
+
+bool threatens(const AbstractPiece* threat, const AbstractPiece* victim) {
+  if (threat != nullptr && victim != nullptr) {
+    if (in(threat->targets, victim->getName())) { return true; }
+  }
+  return false;
+}
 
 std::vector<Vec> King::getPotentialMoves() const {
   return {{1,0}, {1,1}, {0,1}, {-1, 1}, {-1,0}, {-1,-1}, {0,-1}, {1,-1}};

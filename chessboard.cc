@@ -118,9 +118,7 @@ void ChessBoard::basicAddAvailableMoves() {
   }
 }
 
-void ChessBoard::calculateAvailableMoves() {
-  basicAddAvailableMoves();
-
+void ChessBoard::addThreats() {
   int i = 0;
   for (auto &row: board) {
     int j = 0;
@@ -135,11 +133,46 @@ void ChessBoard::calculateAvailableMoves() {
     }
     i++;
   }
+}
 
+bool enPassantable(const AbstractPiece * ap, string name) {
+  return ap != nullptr && ap->getName() == name && ap->isEnPassantable();
+}
+
+
+void ChessBoard::addEnPassantMoves() {
   for (auto &row: board) {
     int k = 0;
     for (auto &col: row) {
       int l = 0; 
+      AbstractPiece* left = inrange(k, l - 1) ? board[k][l - 1].get() : nullptr;
+      AbstractPiece* right = inrange(k, l + 1) ? board[k][l + 1].get(): nullptr;
+      if (enPassantable(col.get(), "whitepawn")) { // Add targets to the Pieces next to it, and add threats to itself
+        string target = intPairToRankFile(k - 1, l);
+        if (left && left->getName() == "blackpawn") {
+            left->addAvailableMove(target);
+            left->addTarget(target);
+            col->addThreat(intPairToRankFile(k, l - 1));
+        }
+        if (right && right->getName() == "blackpawn") {
+          right->addAvailableMove(target);
+          right->addTarget(target);
+          col->addThreat(intPairToRankFile(k, l + 1));
+        }
+        col->setEnPassantable(false);
+      } else if (col.get() != nullptr && col->getName() == "whitepawn") {
+        if (threatens(dynamic_cast<AbstractPiece*>(left), col.get())) {
+          myRemove(col->threats, intPairToRankFile(k, l - 1));
+          myRemove(left->availableMoves, intPairToRankFile(k - 1, l));
+          myRemove(left->targets, intPairToRankFile(k - 1, l));
+        } else if (threatens(dynamic_cast<AbstractPiece*>(right), col.get())) {
+          myRemove(col->threats, intPairToRankFile(k, l + 1));
+          myRemove(right->availableMoves, intPairToRankFile(k - 1, l));
+          myRemove(right->targets, intPairToRankFile(k - 1, l));
+        }
+      }
+
+
       if (col != nullptr) {
         if (col->getName() == "whitepawn") { // handles EnPassant for WhitePawns being captured
           string pos = intPairToRankFile(k - 1, l);
@@ -156,7 +189,7 @@ void ChessBoard::calculateAvailableMoves() {
             }
             col->setEnPassantable(false);
           } else { // remove EnPassant threats from the piece and remove the piece as a target for EnPassant
-            if (inrange(k, l-1) && board[k][l - 1] != nullptr && board[k][l - 1]->getName() == "blackpawn" && in(col->threats, intPairToRankFile(k, l - 1))) { // if there exists threat next to it
+            if (inrange(k, l - 1) && board[k][l - 1] != nullptr && board[k][l - 1]->getName() == "blackpawn" && in(col->threats, intPairToRankFile(k, l - 1))) { // if there exists threat next to it
               myRemove(col->threats, intPairToRankFile(k, l - 1));
               myRemove(board[k][l-1]->availableMoves, intPairToRankFile(k - 1, l));
               myRemove(board[k][l-1]->targets, intPairToRankFile(k - 1, l));
@@ -199,9 +232,17 @@ void ChessBoard::calculateAvailableMoves() {
     }
     k++;
   }
+}
+
+void ChessBoard::calculateAvailableMoves() {
+  basicAddAvailableMoves();
+  addThreats();
+  addEnPassantMoves();
+  
 
   // handles Castling
-  bool whiteCastling = true;
+  bool whiteCastlingright = true;
+  bool whiteCastlingleft = true;
   if (board[0][4].get() != nullptr && board[0][4]->getName() == "king" && board[0][4]->getColour() == "white") {
     if (board[0][7].get() != nullptr && board[0][7]->getName() == "rook" && board[0][7]->getColour() == "white") {
       if (board[0][5].get() == nullptr && board[0][6].get() == nullptr) {
@@ -209,23 +250,33 @@ void ChessBoard::calculateAvailableMoves() {
           if (board[0][5].get() == nullptr && board[0][6].get() == nullptr) {
             for (auto &r: board) {
               for (auto &c: r) {
-                if (c.get() != nullptr && c->getColour() == "black" && (in(c->availableMoves, intPairToRankFile(0, 5)) || in(c->availableMoves, intPairToRankFile(0, 6)))) {
-                  whiteCastling = false;
+                if (c.get() != nullptr && c->getColour() == "black" && 
+                    (in(c->availableMoves, intPairToRankFile(0, 4)) || 
+                    in(c->availableMoves, intPairToRankFile(0, 5)) ||
+                    in(c->availableMoves, intPairToRankFile(0, 6)))) {
+                  whiteCastlingright = false;
                 }
-                if (c.get() != nullptr && c->getColour() == "black" && (in(c->availableMoves, intPairToRankFile(0, 7)))) {
-                  whiteCastling = false;
+                if (c.get() != nullptr && c->getColour() == "black" && 
+                    (in(c->availableMoves, intPairToRankFile(0, 2)) || 
+                    in(c->availableMoves, intPairToRankFile(0, 3)) ||
+                    in(c->availableMoves, intPairToRankFile(0, 4)))) {
+                  whiteCastlingleft = false;
                 }
-              }
-            }
-            if (whiteCastling) {
-              board[0][4]->addAvailableMove(intPairToRankFile(0, 7));
-              board[0][7]->addAvailableMove(intPairToRankFile(0, 4));
-            }
+                }
+                if (whiteCastlingright) {
+                  board[0][4]->addAvailableMove(intPairToRankFile(0, 6));
+                  board[0][7]->addAvailableMove(intPairToRankFile(0, 5));
+                }
+                if (whiteCastlingleft) {
+                  board[0][4]->addAvailableMove(intPairToRankFile(0, 2));
+                  board[0][0]->addAvailableMove(intPairToRankFile(0, 3));
+                }
           }
         }
       }
     }
   }
+  
 
   bool blackCastling = true;
   if (board[7][4].get() != nullptr && board[7][4]->getName() == "king" && board[7][4]->getColour() == "black") {
@@ -366,6 +417,13 @@ bool ChessBoard::isInsufficientMaterial() const {
   }
   return whiteInsufficient && blackInsufficient;
 }
+
+void printElements(vector<int> vec) const {
+  for (auto m: vec) {
+    cout << m << endl;
+  }
+}
+
 bool ChessBoard::movePiece(string start, string end) {
   auto startCoords = rankFileToIntPair(start);
   auto endCoords = rankFileToIntPair(end);

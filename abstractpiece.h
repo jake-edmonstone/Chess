@@ -36,6 +36,8 @@ class AbstractPiece {
   virtual void setCastleable(bool value);
   virtual bool isEnPassantable() const;
   virtual void setEnPassantable(bool value);
+  // Determines whether or not a piece is threatened by another one
+  friend bool threatens(const AbstractPiece* threat, const AbstractPiece* victim);
   friend class ChessBoard;
 };
 
