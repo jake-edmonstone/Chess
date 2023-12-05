@@ -124,6 +124,27 @@ void Game::play1Game(float &whiteScore, float &blackScore) {
   cout << *cb;
   cb->gd->notify(cb->getBoard());
   while (cin) {
+    string turn = whitesTurn ? "white" : "black";
+    string notTurn = whitesTurn ? "black" : "white";
+    // Checkmate, Stalemate, insufficient material and chek handling
+    if (cb->isCheckMate(turn)) {
+      cout << "Checkmate! " << notTurn << " Wins!" << endl;
+      if (notTurn == "white") ++whiteScore;
+      else ++blackScore;
+      break;
+    } else if (cb->isStaleMate(turn)) {
+      cout << "Stalemate!" << endl;
+      whiteScore += 0.5;
+      blackScore += 0.5;
+      break;
+    } else if (cb->isInsufficientMaterial()) {
+      cout << "There is insufficent material for either colour to win" << endl;
+      whiteScore += 0.5;
+      blackScore += 0.5;
+      break;
+    } else if (cb->isCheck(turn)) {
+      cout << turn << " is in check" << endl;
+    }
     string start, end;
     if (whitesTurn) {
       while (true) {
@@ -167,29 +188,9 @@ void Game::play1Game(float &whiteScore, float &blackScore) {
     cout << *cb;
     cb->gd->notify(cb->getBoard());
 
-    string turn = whitesTurn ? "white" : "black";
-    string notTurn = whitesTurn ? "black" : "white";
+    turn = whitesTurn ? "white" : "black";
+    notTurn = whitesTurn ? "black" : "white";
 
-    // Checkmate, Stalemate, insufficient material and chek handling
-
-    if (cb->isCheckMate(turn)) {
-      cout << "Checkmate! " << notTurn << " Wins!" << endl;
-      if (notTurn == "white") ++whiteScore;
-      else ++blackScore;
-      break;
-    } else if (cb->isStaleMate(turn)) {
-      cout << "Stalemate!" << endl;
-      whiteScore += 0.5;
-      blackScore += 0.5;
-      break;
-    } else if (cb->isInsufficientMaterial()) {
-      cout << "There is insufficent material for either colour to win" << endl;
-      whiteScore += 0.5;
-      blackScore += 0.5;
-      break;
-    } else if (cb->isCheck(turn)) {
-      cout << turn << " is in check" << endl;
-    }
   }
 
 }

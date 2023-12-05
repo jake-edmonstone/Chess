@@ -14,7 +14,6 @@
 #include "vec.h"
 
 class AbstractPiece {
-  public:
   // vectors of strings storing a pieces available moves, which squares it is targeting, and which squares are threatening it
   std::vector<std::string> availableMoves;
   std::vector<std::string> targets;
@@ -23,6 +22,15 @@ class AbstractPiece {
   std::string position;
   // used for the board copy constructor
   virtual std::unique_ptr<AbstractPiece> clone() const = 0;
+  // add elements to the corresponding vectors
+  void addAvailableMove(std::string move);
+  void addTarget(std::string target);
+  void addThreat(std::string threat);
+  // Checkers for special move validity
+  virtual bool isCastleable() const;
+  virtual void setCastleable(bool value);
+  virtual bool isEnPassantable() const;
+  virtual void setEnPassantable(bool value);
  public:
   AbstractPiece(std::string colour, std::string position);
   virtual ~AbstractPiece() = 0;
@@ -32,33 +40,22 @@ class AbstractPiece {
   virtual std::vector<Vec> getPotentialMoves() const = 0;
   // returns the name of the Chess piece. For example, "king"
   virtual std::string getName() const = 0;
-  // returns the rank of a Piece
-  virtual int getRank() const = 0;
-  // add elements to the corresponding vectors
-  void addAvailableMove(std::string move);
-  void addTarget(std::string target);
-  void addThreat(std::string threat);
   // getters
   std::string getColour() const; 
   std::string getPosition() const;
+  const std::vector<std::string> &getTargets() const;
   const std::vector<std::string> &getAvailableMoves() const;
-  virtual bool isCastleable() const;
-  virtual void setCastleable(bool value);
-  virtual bool isEnPassantable() const;
-  virtual void setEnPassantable(bool value);
-  // Determines whether or not a piece is threatened by another one
-  friend bool threatens(const AbstractPiece* threat, const AbstractPiece* victim);
   friend class ChessBoard;
 };
 
 class King: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
   bool Castleable = true;
+  bool isCastleable() const override;
+  void setCastleable(bool value) override;
  public:
   King(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
-  bool isCastleable() const override;
-  void setCastleable(bool value) override;
   std::string getName() const override;
   int getRank() const override;
 };
@@ -73,11 +70,11 @@ class Queen: public AbstractPiece {
 class Rook: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
   bool Castleable = true;
+  bool isCastleable() const override;
+  void setCastleable(bool value) override;
  public:
   Rook(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
-  bool isCastleable() const override;
-  void setCastleable(bool value) override;
   std::string getName() const override;
   int getRank() const override;
 };
@@ -100,17 +97,18 @@ class Bishop: public AbstractPiece {
 class WhitePawn: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
   bool enPassantable = false;
+  bool isEnPassantable() const override;
+  void setEnPassantable(bool value) override;
  public:
   WhitePawn(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
-  int getRank() const override;
-  bool isEnPassantable() const override;
-  void setEnPassantable(bool value) override;
 };
 class BlackPawn: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
   bool enPassantable = false;
+  bool isEnPassantable() const override;
+  void setEnPassantable(bool value) override;
  public:
   BlackPawn(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
@@ -119,5 +117,7 @@ class BlackPawn: public AbstractPiece {
   bool isEnPassantable() const override;
   void setEnPassantable(bool value) override;
 };
+
+bool threatens(const AbstractPiece* threat, const AbstractPiece* victim);
 
 #endif

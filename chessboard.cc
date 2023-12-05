@@ -6,15 +6,16 @@
 
 using namespace std;
 
+// prints a vector, for debugging purposes
 void print(vector<string>v) {
   for (auto &i : v) cout << i << " ";
   cout << endl;
 }
-
+// returns true if element is in vec
 template<typename T> bool in(const vector<T>& vec, const T& element) {
   return find(vec.begin(), vec.end(), element) != vec.end();
 }
-
+// removes element from vec
 template<typename T> bool myRemove(std::vector<T>& vec, const T& element) {
   bool removed = false;
   for (auto it = vec.begin(); it != vec.end(); ) {
@@ -22,13 +23,11 @@ template<typename T> bool myRemove(std::vector<T>& vec, const T& element) {
   }
   return removed;
 }
-
 bool ChessBoard::inrange(int r, int c) const {
   if (r < 0 || r > 7) return false;
   if (c < 0 || c > 7) return false;
   return true;
 }
-
 string ChessBoard::intPairToRankFile(int row, int col) const {
   col += 'a';
   char ch = col;
@@ -36,7 +35,6 @@ string ChessBoard::intPairToRankFile(int row, int col) const {
   c += to_string(row + 1);
   return c;
 }
-
 pair<int,int> ChessBoard::rankFileToIntPair(string rf) const {
   char first = rf[0];
   int col = first - 'a';
@@ -142,11 +140,10 @@ void ChessBoard::addThreats() {
     i++;
   }
 }
-
-bool enPassantable(const AbstractPiece * ap, string name) {
+// determines if ap is a valid EnPassantable piece
+bool ChessBoard::enPassantable(const AbstractPiece * ap, string name) {
   return ap != nullptr && ap->getName() == name && ap->isEnPassantable();
 }
-
 
 void ChessBoard::addEnPassantMoves() {
   int k = 0;
@@ -310,7 +307,7 @@ ChessBoard::ChessBoard() {
   gd = make_unique<GraphicsDisplay>(this->getBoard()); 
   board.resize(8); // makes 8 rows
   for (auto &i: board) i.resize(8); // makes 8 columns, each entry is nullptr
-  updatePieceLists();
+  updatePieceLists(); // updates the lists of black and white pieces
 }
 ChessBoard::ChessBoard(const ChessBoard &other) {
   board.resize(8); // makes 8 rows
@@ -320,7 +317,7 @@ ChessBoard::ChessBoard(const ChessBoard &other) {
   for (int i = 0; i < 8; ++i) {
     for (int j = 0; j < 8; ++j) {
       if (other.board[i][j]) {
-        board[i][j] = other.board[i][j]->clone();
+        board[i][j] = other.board[i][j]->clone(); // makes a copy of each piece
       }
     }
   }
@@ -354,6 +351,7 @@ void ChessBoard::defaultSetup() {
 }
 
 void ChessBoard::updatePieceLists() {
+  // iterates over the board, piece is white => add to whitePieces, same for black
   blackPieces.resize(0);
   whitePieces.resize(0);
   for (const auto &i: board) {
@@ -366,6 +364,7 @@ void ChessBoard::updatePieceLists() {
   }
 }
 bool ChessBoard::isCheck(string colour) const {
+  // checks if the king has any threats
   for (const auto &i: board) {
     for (const auto &j : i) {
       if (j) {
@@ -379,6 +378,7 @@ bool ChessBoard::isCheck(string colour) const {
   return false;
 }
 bool ChessBoard::isCheckMate(string colour) const {
+  // check if the king is in check and has no legal moves
   if (!isCheck(colour)) return false;
   for (const auto &i : board) {
     for (const auto &j : i) {
@@ -392,6 +392,7 @@ bool ChessBoard::isCheckMate(string colour) const {
   return true;
 }
 bool ChessBoard::isStaleMate(string colour) const {
+  // check if the king is not in check and has no legal moves
   if (isCheck(colour)) return false;
   for (const auto &i : board) {
     for (const auto &j : i) {
@@ -405,6 +406,8 @@ bool ChessBoard::isStaleMate(string colour) const {
   return true;
 }
 bool ChessBoard::isInsufficientMaterial() const {
+  // checks if both sides have insufficient material to checkmate
+  // ie has a lone king, a king and a knight, or a king and a bishop
   bool whiteInsufficient = false;
   bool blackInsufficient = false;
   if (whitePieces.size() == 1) whiteInsufficient = true;
@@ -431,6 +434,7 @@ bool ChessBoard::isTerminalState() const {
 }
 
 void ChessBoard::updatePositions() {
+  // sets the position fields of each piece to be where they are on the board
   int r = 0;
   for (auto& n: board) {
     int c = 0;
@@ -483,6 +487,9 @@ bool ChessBoard::movePiece(string start, string end) {
 }
 
 void ChessBoard::dontCheckYourself() {
+  // iterates through every piece's available moves. A copy of the board is
+  // made for each move, the move is then made on the copy. if the copy board is in check,
+  // then remove the original move as it would result in putting yourself in check.
   for (int r = 0; r < 8; ++r) {
     for (int c = 0; c < 8; ++c) {
       auto &piece = board[r][c];
@@ -503,6 +510,9 @@ void ChessBoard::dontCheckYourself() {
   }
 }
 void ChessBoard::getOutOfCheck() {
+  // same logic as dontCheckYourself() but it first checks if the colour is in check.
+  // If it is, then restrict each pieces moves to be only the moves that gets it
+  // out of check
   for (int r = 0; r < 8; ++r) {
     for (int c = 0; c < 8; ++c) {
       auto &piece = board[r][c];
@@ -528,7 +538,7 @@ void ChessBoard::getOutOfCheck() {
 const vector<const AbstractPiece*> &ChessBoard::getPieces(string colour) const {
   if (colour == "white") return whitePieces;
   else if (colour == "black") return blackPieces;
-  throw runtime_error("trying to get pieces of neither black or white");
+  throw runtime_error("trying to get pieces of neither black or white"); // should never happen, just for ease of debugging
   return whitePieces;
 }
 

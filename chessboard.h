@@ -8,7 +8,6 @@
 #include "graphicsdisplay.h"
 
 class ChessBoard {
-  public:
   // A 2D vector of unique_ptrs to Pieces
   std::vector<std::vector<std::unique_ptr<AbstractPiece>>> board;
   // Vectors of raw const pointers to Pieces
@@ -41,10 +40,14 @@ class ChessBoard {
   bool whiteLeftCastleOpen() const;
   bool blackRightCastleOpen() const;
   bool blackLeftCastleOpen() const;
+  // determines if ap is a valid EnPassantable piece
+  bool enPassantable(const AbstractPiece * ap, std::string name);
   // Returns if position is being targetted by another piece
   bool isTarget(std::string position) const;
   // updates positions of all pieces on the grid
   void updatePositions();
+  // determines whether or not a Piece is blocked by another Piece from moving by (xshift, yshift)
+  bool isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) const;
  public:
   // ChessBoard default ctor, makes an empty board
   ChessBoard();
@@ -54,11 +57,9 @@ class ChessBoard {
   void clear();
   // Sets up a chess board to offical "default" position
   void defaultSetup();
-  // determines whether or not a Piece is blocked by another Piece from moving by (xshift, yshift)
-  bool isBlocked(int firstpiecey, int firstpiecex, int yshift, int xshift) const;
   // updates each pieces fields (threats, targets, availaible moves)
   void calculateAvailableMoves();
-  // returns whether or not a particular colour is in check
+  // returns whether or not a particular colour is in check, checkmate, stalemate, insufficient material
   bool isCheck(std::string colour) const;
   bool isCheckMate(std::string colour) const;
   bool isStaleMate(std::string colour) const;
@@ -84,13 +85,8 @@ class ChessBoard {
   bool isTerminalState() const;
   // prints out a text display of the board with the white pieces on top
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
+  friend class Game;
 };
-
-// determines if ap is a valid EnPassantable piece
-bool enPassantable(const AbstractPiece * ap, std::string name);
-
-template<typename T> bool in(const std::vector<T>& vec, const T& element);
-template<typename T> bool myRemove(std::vector<T>& vec, const T& element);
 
 std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard);
 

@@ -31,10 +31,10 @@ pair<string, string> Human::getMove(string config) const {
     if (command == "move") {
       whitePiecePositions.clear();
       blackPiecePositions.clear();
-      for (const auto &i : cb->whitePieces) {
+      for (const auto &i : cb->getPieces("white")) {
         whitePiecePositions.emplace_back(i->getPosition());
       }
-      for (const auto &i : cb->blackPieces) {
+      for (const auto &i : cb->getPieces("black")) {
         blackPiecePositions.emplace_back(i->getPosition());
       }
       string start, end;
@@ -90,13 +90,13 @@ pair<string, string> Computer1::getMove(string config) const {
   string start, end;
   vector<const AbstractPiece*> validPieces;
   if (this->getColour() == "white") {
-    for (const auto &i : cb->whitePieces) {
+    for (const auto &i : cb->getPieces("white")) {
       if (!i->getAvailableMoves().empty()) {
         validPieces.emplace_back(i);
       }
     }    
   } else if (this->getColour() == "black") {
-    for (const auto &i : cb->blackPieces) {
+    for (const auto &i : cb->getPieces("black")) {
       if (!i->getAvailableMoves().empty()) {
         validPieces.emplace_back(i);
       }

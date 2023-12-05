@@ -22,9 +22,11 @@ void AbstractPiece::addTarget(string target) { targets.emplace_back(target); }
 
 void AbstractPiece::addThreat(string threat) { threats.emplace_back(threat); }
 
+const std::vector<std::string> &AbstractPiece::getTargets() const { return targets; }
+
 bool threatens(const AbstractPiece* threat, const AbstractPiece* victim) {
   if (threat != nullptr && victim != nullptr) {
-    if (in(threat->targets, victim->getName())) { return true; }
+    if (in(threat->getTargets(), victim->getName())) { return true; }
   }
   return false;
 }
