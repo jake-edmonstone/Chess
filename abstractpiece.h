@@ -8,16 +8,17 @@
 
 class AbstractPiece {
   public:
+  // vectors of strings storing a pieces available moves, which squares it is targeting, and which squares are threatening it
   std::vector<std::string> availableMoves;
   std::vector<std::string> targets;
   std::vector<std::string> threats;
   std::string colour;
   std::string position;
+  // used for the board copy constructor
   virtual std::unique_ptr<AbstractPiece> clone() const = 0;
  public:
   AbstractPiece(std::string colour, std::string position);
   virtual ~AbstractPiece() = 0;
-
   // returns the set of all potential moves a piece can make by virtue of its type
   // each potential move is specified by a vector in R^2 indicating the number of squares it can move
   // in the x-direction followed by the number of squares it can move in the y-direction
@@ -28,7 +29,7 @@ class AbstractPiece {
   void addAvailableMove(std::string move);
   void addTarget(std::string target);
   void addThreat(std::string threat);
-  // obtains the colour of the piece
+  // getters
   std::string getColour() const; 
   std::string getPosition() const;
   const std::vector<std::string> &getAvailableMoves() const;

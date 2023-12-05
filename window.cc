@@ -74,9 +74,7 @@ void Xwindow::drawString(int x, int y, string msg) {
   // Draw the string
   XDrawString(d, w, DefaultGC(d, s), x, y, msg.c_str(), msg.length());
 
-  // Reset to default font if a new font was loaded
-  if (font) {
-    XUnloadFont(d, font->fid);
-  }
+  // free the font
+  XFreeFont(d, font);
 }
 
