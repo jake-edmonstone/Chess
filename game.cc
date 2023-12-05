@@ -180,6 +180,8 @@ void Game::play1Game(float &whiteScore, float &blackScore) {
       }
       cb->calculateAvailableMoves(); // explicit call since pieces change but movePiece is not called which normally handles this
     }
+    cb->updatePieceLists();
+    cb->updatePositions();
     cb->dontCheckYourself();
     cb->getOutOfCheck();
 
