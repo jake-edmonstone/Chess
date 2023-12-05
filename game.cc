@@ -14,7 +14,11 @@ unique_ptr<AbstractPlayer> Game::makePlayer(string playerType, string colour) {
     return make_unique<Human>(cb.get(), colour);
   } else if (playerType == "computer1") {
     return make_unique<Computer1>(cb.get(), colour);
-  } 
+  } else if (playerType == "computer2") {
+    return make_unique<Computer2>(cb.get(), colour);
+  } else if (playerType == "computer3") {
+    return make_unique<Computer3>(cb.get(), colour);
+  }
   // more computers
   else {
     throw invalid_argument("not a recognized player type");

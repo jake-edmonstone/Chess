@@ -113,3 +113,188 @@ char Computer1::getPromotionDecision() const {
   return getRandomElement<char>(pieces);
 }
 
+vector<std::pair<string, string>> AbstractPlayer::getMovesCheck() const {
+  string start, end;
+  vector<pair<string, string>> possibleChecks;
+
+  if (this->getColour() == "white") {
+    for (const auto &piece : cb->whitePieces) {
+      start = piece->getPosition();
+      for (const auto &move : piece->getAvailableMoves()) {
+        ChessBoard temp{*cb};
+        temp.movePiece(start, move);
+        if (temp.isCheck("black") && !temp.isCheckMate("black")) {
+          possibleChecks.emplace_back(pair<string, string>(start, move));
+        }
+      }
+    }
+  } else if (this->getColour() == "black") {
+    for (const auto &piece: cb->blackPieces) {
+      start = piece->getPosition();
+      for (const auto &move : piece->getAvailableMoves()) {
+        ChessBoard temp{*cb};
+        temp.movePiece(start, move);
+        if (temp.isCheck("white") && !temp.isCheckMate("white")) {
+          possibleChecks.emplace_back(pair<string, string>(start, move));
+        }
+      }
+    }
+  }
+  return possibleChecks;
+}
+
+vector<std::pair<string, string>> AbstractPlayer::getMovesCheckMate() const {
+  string start, end;
+  vector<pair<string, string>> possibleCheckMates;
+
+  if (this->getColour() == "white") {
+    for (const auto &piece : cb->whitePieces) {
+      start = piece->getPosition();
+      for (const auto &move : piece->getAvailableMoves()) {
+        ChessBoard temp{*cb};
+        temp.movePiece(start, move);
+        if (temp.isCheckMate("black")) {
+          possibleCheckMates.emplace_back(pair<string, string>(start, move));
+        }
+      }
+    }
+  } else if (this->getColour() == "black") {
+    for (const auto &piece: cb->blackPieces) {
+      start = piece->getPosition();
+      for (const auto &move : piece->getAvailableMoves()) {
+        ChessBoard temp{*cb};
+        temp.movePiece(start, move);
+        if (temp.isCheckMate("white")) {
+          possibleCheckMates.emplace_back(pair<string, string>(start, move));
+        }
+      }
+    }
+  }
+  return possibleCheckMates;
+}
+
+vector<std::pair<string, string>> AbstractPlayer::getMovesCapture() const {
+  string start, end;
+  vector<pair<string, string>> possibleCaptures;
+
+  if (this->getColour() == "white") {
+    for (const auto &piece : cb->whitePieces) {
+      start = piece->getPosition();
+      for (const auto &move : piece->targets) {
+        possibleCaptures.emplace_back(pair<string, string>(start, move));
+      }
+    }
+  } else if (this->getColour() == "black") {
+    for (const auto &piece: cb->blackPieces) {
+      start = piece->getPosition();
+      for (const auto &move : piece->targets) {
+        possibleCaptures.emplace_back(pair<string, string>(start, move));
+      }
+    }
+  }
+  return possibleCaptures;
+}
+
+std::vector<std::pair<std::string, std::string>> AbstractPlayer::getMovesAvoidThreat() const {
+  string start, end;
+  vector<pair<string, string>> threatAvoidantMoves;
+
+  if (this->getColour() == "white") {
+    for (const auto &piece : cb->whitePieces) {
+      start = piece->getPosition();
+      if (piece->threats.size() > 0) {
+        for (auto& move : piece->availableMoves) {
+          ChessBoard temp{*cb};
+          temp.movePiece(start, move);
+          pair<int, int> mv = temp.rankFileToIntPair(move);
+          if (temp.board[mv.first][mv.second]->threats.empty()) {
+            threatAvoidantMoves.emplace_back(start, move);
+          }
+        }
+      }
+    }
+  } else if (this->getColour() == "black") {
+    for (const auto &piece : cb->blackPieces) {
+      start = piece->getPosition();
+      if (piece->threats.size() > 0) {
+        for (auto& move : piece->availableMoves) {
+          ChessBoard temp{*cb};
+          temp.movePiece(start, move);
+          pair<int, int> mv = temp.rankFileToIntPair(move);
+          if (temp.board[mv.first][mv.second]->threats.empty()) {
+            threatAvoidantMoves.emplace_back(start, move);
+          }
+        }
+      }
+    }
+  }
+  cout << threatAvoidantMoves.size() << endl;
+  return threatAvoidantMoves;
+}
+
+pair<string, string> AbstractPlayer::getRandomMove() const {
+  vector<const AbstractPiece*> moves;
+
+  if (this->getColour() == "white") {
+    for (auto &p: cb->whitePieces) {
+      if (!p->availableMoves.empty()) { moves.emplace_back(p); }
+    }
+  }
+
+  if (this->getColour() == "black") {
+    for (auto &p: cb->blackPieces) {
+      if (!p->availableMoves.empty()) { moves.emplace_back(p); }
+    }
+  }
+
+  const AbstractPiece* piece = getRandomElement<const AbstractPiece*>(moves);
+  return pair<string, string>(piece->getPosition(), getRandomElement(piece->availableMoves));
+}
+
+Computer2::Computer2(ChessBoard *cb, std::string colour): AbstractPlayer{cb, colour} {}
+
+std::pair<std::string, std::string> Computer2::getMove(string config) const {
+  sleep(2);
+  string start, end;
+  
+  vector<pair<string, string>>checkMates = getMovesCheckMate();
+  if (!checkMates.empty()) { return getRandomElement(checkMates); }
+
+  vector<pair<string, string>>checks = getMovesCheck();
+  if (!checks.empty()) { return getRandomElement(checks); }
+
+  vector<pair<string, string>>captures = getMovesCapture();
+  if (!captures.empty()) { return getRandomElement(captures);}
+
+  return getRandomMove();
+}
+
+char Computer2::getPromotionDecision() const {
+  vector<char> pieces {'Q', 'N'};
+  return getRandomElement<char>(pieces);
+}
+
+Computer3::Computer3(ChessBoard *cb, std::string colour): AbstractPlayer{cb, colour} {}
+
+std::pair<std::string, std::string> Computer3::getMove(string config) const {
+  sleep(2);
+  string start, end;
+
+  vector<pair<string, string>> checkMates = getMovesCheckMate();
+  if (!checkMates.empty()) { return getRandomElement(checkMates); }
+
+  vector<pair<string, string>> movesAvoidThreat = getMovesAvoidThreat();
+  if (!movesAvoidThreat.empty()) { return getRandomElement(movesAvoidThreat); }
+
+  vector<pair<string, string>> checks = getMovesCheck();
+  if (!checks.empty()) { return getRandomElement(checks); }
+
+  vector<pair<string, string>> captures = getMovesCapture();
+  if (!captures.empty()) { return getRandomElement(captures);}
+
+  return getRandomMove();
+}
+
+char Computer3::getPromotionDecision() const {
+  return 'Q';
+}
