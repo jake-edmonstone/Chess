@@ -21,7 +21,7 @@ string AbstractPlayer::getColour() const {
 
 Human::Human(ChessBoard *cb, string colour): AbstractPlayer{cb, colour} {}
 
-pair<string, string> Human::getMove() const {
+pair<string, string> Human::getMove(string config) const {
   string command;
   vector<string> whitePiecePositions;
   vector<string> blackPiecePositions;
@@ -84,7 +84,7 @@ char Human::getPromotionDecision() const {
 }
 Computer1::Computer1(ChessBoard *cb, string colour): AbstractPlayer{cb, colour} {}
 
-pair<string, string> Computer1::getMove() const {
+pair<string, string> Computer1::getMove(string config) const {
   sleep(2);
   string start, end;
   vector<const AbstractPiece*> validPieces;
