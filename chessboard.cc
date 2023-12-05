@@ -426,6 +426,10 @@ void printElements(vector<int> vec) {
   }
 }
 
+bool ChessBoard::isTerminalState() const {
+  return (isCheckMate("white") || isCheckMate("black") || isStaleMate("white") || isStaleMate("black") || isInsufficientMaterial());
+}
+
 void ChessBoard::updatePositions() {
   int r = 0;
   for (auto& n: board) {
@@ -632,4 +636,15 @@ std::ostream &operator<<(std::ostream &out, const ChessBoard &chessboard) { // v
     out << endl;
   }
   return out;
+}
+
+int ChessBoard::getValue() const {
+  int sum = 0;
+  for (auto& wp: whitePieces) {
+    sum += wp->getRank();
+  }
+  for (auto& bp: blackPieces) {
+    sum -= bp->getRank();
+  }
+  return sum;
 }

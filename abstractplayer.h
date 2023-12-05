@@ -3,6 +3,12 @@
 
 #include "chessboard.h"
 
+struct State {
+  ChessBoard cb;
+  std::pair<std::string, std::string> move;
+  std::vector<std::shared_ptr<State>> nextStates;
+};
+
 class AbstractPlayer {
  protected:
   const ChessBoard *cb; // pointer to const ChessBoard. Each player can "observe" the board but not change it
@@ -16,15 +22,15 @@ class AbstractPlayer {
   std::string getColour() const; // getter
   virtual char getPromotionDecision() const = 0; // for when a player can promote a pawn
   // gets all moves that lead to check, but not checkmate for the player
-  vector<std::pair<string, string>> getMovesCheck() const;
+  std::vector<std::pair<std::string, std::string>> getMovesCheck() const;
   // gets all moves that lead to checkmate for the player
-  vector<std::pair<string, string>> getMovesCheckMate() const;
+  std::vector<std::pair<std::string, std::string>> getMovesCheckMate() const;
   // gets all moves that lead to a capture
-  vector<std::pair<string, string>> getMovesCapture() const;
+  std::vector<std::pair<std::string, std::string>> getMovesCapture() const;
   // gets all moves that avoid a threat
   std::vector<std::pair<std::string, std::string>> getMovesAvoidThreat() const;
   // fetches a random move
-  pair<string, string> getRandomMove() const;
+  std::pair<std::string, std::string> getRandomMove() const;
 
 
 };
@@ -54,6 +60,17 @@ class Computer3: public AbstractPlayer {
  public:
   Computer3(ChessBoard *cb, std::string colour);
   std::pair<std::string, std::string>getMove(std::string config="sleep") const override;
+  char getPromotionDecision() const override;
+};
+
+class Computer4: public AbstractPlayer {
+ public:
+  Computer4(ChessBoard *cb, std::string colour);
+  std::pair<std::string, std::string>getMove(std::string config="sleep") const override;
+  void findPossibleMoves(State& state, int depth, bool turn) const;
+  std::pair<std::string, std::string> getOptimalMove(State& root, int peakValSoFar) const;
+  int getPeakValueDownPath(const State* state, std::string bound) const;
+  int minimax(const ChessBoard* bp, int depth, bool isblack) const;
   char getPromotionDecision() const override;
 };
 

@@ -78,6 +78,10 @@ class ChessBoard {
   bool pawnOnFirstOrLastRank() const;
   // returns 2d vec of chars corresponding to piece types and positions
   const std::vector<std::vector<char>> getBoard() const;
+  // gets the value of a board, where whitepieces are weighed positively and Black pieces are negative
+  int getValue() const;
+  // returns whether or not the board is in a terminal state
+  bool isTerminalState() const;
   // prints out a text display of the board with the white pieces on top
   friend std::ostream &operator<<(std::ostream &out, const ChessBoard &board);
 };

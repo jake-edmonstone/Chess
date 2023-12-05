@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unistd.h>
 #include "abstractplayer.h"
+#include <cmath>
 #include "random.h"
 
 using namespace std;
@@ -228,7 +229,6 @@ std::vector<std::pair<std::string, std::string>> AbstractPlayer::getMovesAvoidTh
       }
     }
   }
-  cout << threatAvoidantMoves.size() << endl;
   return threatAvoidantMoves;
 }
 
@@ -277,7 +277,7 @@ char Computer2::getPromotionDecision() const {
 Computer3::Computer3(ChessBoard *cb, std::string colour): AbstractPlayer{cb, colour} {}
 
 std::pair<std::string, std::string> Computer3::getMove(string config) const {
-  sleep(2);
+  if (config == "sleep") { sleep(2); }
   string start, end;
 
   vector<pair<string, string>> checkMates = getMovesCheckMate();
@@ -296,5 +296,162 @@ std::pair<std::string, std::string> Computer3::getMove(string config) const {
 }
 
 char Computer3::getPromotionDecision() const {
+  return 'Q';
+}
+
+// true means it's black's turn!
+void Computer4::findPossibleMoves(State& state, int depth, bool turn) const {
+  if (depth == 0) { return; }
+  if (turn) {
+    for (auto& piece : state.cb.blackPieces) {
+      for (auto& move : piece->availableMoves) {
+        shared_ptr<ChessBoard> temp = make_shared<ChessBoard>(state.cb);
+        temp->movePiece(piece->getPosition(), move);
+        shared_ptr<State> nextstate = make_shared<State>(*temp, pair(piece->getPosition(), move));
+        findPossibleMoves(*nextstate.get(), depth - 1, !turn); // finds possible moves for the next state
+        state.nextStates.emplace_back(nextstate);
+      }
+    }
+  } else {
+    for (auto& piece : state.cb.whitePieces) {
+      for (auto& move : piece->availableMoves) {
+        shared_ptr<ChessBoard> temp = make_shared<ChessBoard>(state.cb);
+        temp->movePiece(piece->getPosition(), move);
+        shared_ptr<State> nextstate = make_shared<State>(*temp, pair(piece->getPosition(), move));
+        findPossibleMoves(*nextstate.get(), depth - 1, !turn); // finds possible moves for the next state
+        state.nextStates.emplace_back(nextstate);
+      }
+    }
+  }
+}
+
+int Computer4::getPeakValueDownPath(const State* state, string bound) const {
+  int peak = state->cb.getValue();
+  if (state->nextStates.empty()) { return peak; }
+  else if (bound == "max") {
+    for (auto& state : state->nextStates) {
+      int val = getPeakValueDownPath(state.get(), bound);
+      if (val > peak) {
+        peak = val;
+      }
+    }
+  } else if (bound == "min") {
+    for (auto& state : state->nextStates) {
+      int val = getPeakValueDownPath(state.get(), bound);
+      if (val < peak) {
+        peak = val;
+      }
+    }
+  }
+  return peak;
+}
+
+std::pair<std::string, std::string> Computer4::getOptimalMove(State& root, int peakValSoFar) const {
+  pair<string, string> optimalMove;
+
+  if (this->getColour() == "white") {
+    for (auto nextstate : root.nextStates) {
+      string bound = "max";
+      if (getPeakValueDownPath(nextstate.get(), bound) > peakValSoFar) {
+        optimalMove = nextstate->move;
+      }
+    }
+  }
+
+  if (this->getColour() == "black") {
+    for (auto nextstate : root.nextStates) {
+      string bound = "min";
+      if (getPeakValueDownPath(nextstate.get(), bound) < peakValSoFar) {
+        optimalMove = nextstate->move;
+      }
+    }
+  }
+  return optimalMove;
+}
+
+
+int Computer4::minimax(const ChessBoard* bp, int depth, bool isblack) const {
+  if (depth == 0 || bp->isTerminalState()) { return bp->getValue(); }
+  int value = 0;
+  if (!isblack) {
+    value = -1000000;
+    for (auto piece : bp->whitePieces) {
+      for (const auto &move : piece->availableMoves) {
+        ChessBoard temp{*bp};
+        temp.movePiece(piece->getPosition(), move);
+        if (temp.pawnOnFirstOrLastRank()) {
+          temp.placePiece('Q', move);
+          temp.calculateAvailableMoves();
+          temp.dontCheckYourself();
+          temp.getOutOfCheck();
+          temp.updatePieceLists();
+          temp.updatePositions();
+        }
+        value = max(value, minimax(&temp, depth - 1, true));
+      }
+    }
+  } else {
+    value = 1000000;
+    for (auto piece : bp->blackPieces) {
+      for (const auto &move : piece->availableMoves) {
+        ChessBoard temp{*bp};
+        temp.movePiece(piece->getPosition(), move);
+        if (temp.pawnOnFirstOrLastRank()) {
+          temp.placePiece('q', move);
+          temp.calculateAvailableMoves();
+          temp.dontCheckYourself();
+          temp.getOutOfCheck();
+          temp.updatePieceLists();
+          temp.updatePositions();
+        }
+        value = min(value, minimax(&temp, depth - 1, false));
+      }
+    }
+  }
+  return value;
+} 
+
+
+
+Computer4::Computer4(ChessBoard *cb, std::string colour): AbstractPlayer{cb, colour} {}
+
+std::pair<std::string, std::string> Computer4::getMove(string config) const {
+  pair<string, string> optimalMoveSoFar;
+  int value;
+  if (this->colour == "white") {
+    value = -1000000;
+    for (const auto piece : cb->whitePieces) {
+      for (auto move : piece->availableMoves) {
+        ChessBoard temp{*cb};
+        temp.movePiece(piece->getPosition(), move);
+        int newValue = minimax(&temp, 3, true);
+        if (newValue > value) {
+          value = newValue;
+          optimalMoveSoFar = pair<string, string>(piece->getPosition(), move);
+        }
+      }
+    }
+  } else if (this->colour == "black") {
+    value = 1000000;
+    for (auto piece: cb->blackPieces) {
+      for (auto move : piece->availableMoves) {
+        ChessBoard temp{*cb};
+        temp.movePiece(piece->getPosition(), move);
+        int newValue = minimax(&temp, 3, false);
+        if (newValue < value) {
+          value = newValue;
+          optimalMoveSoFar = pair<string, string>(piece->getPosition(), move);
+        }
+      }
+    }
+  }
+  
+  if (optimalMoveSoFar.first.empty() || optimalMoveSoFar.second.empty()) { 
+    throw runtime_error("piece colour is incorrect"); 
+  } 
+  return optimalMoveSoFar;
+}
+
+char Computer4::getPromotionDecision() const {
   return 'Q';
 }

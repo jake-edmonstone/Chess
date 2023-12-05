@@ -18,6 +18,8 @@ unique_ptr<AbstractPlayer> Game::makePlayer(string playerType, string colour) {
     return make_unique<Computer2>(cb.get(), colour);
   } else if (playerType == "computer3") {
     return make_unique<Computer3>(cb.get(), colour);
+  } else if (playerType == "computer4") {
+    return make_unique<Computer4>(cb.get(), colour);
   }
   // more computers
   else {

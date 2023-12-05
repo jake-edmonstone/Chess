@@ -1,6 +1,13 @@
 #ifndef ABSTRACTPIECE_H
 #define ABSTRACTPIECE_H
 
+#  define PAWN_VALUE 100
+#  define KNIGHT_VALUE 325
+#  define BISHOP_VALUE 325
+#  define ROOK_VALUE 500
+#  define QUEEN_VALUE 1050
+#  define KING_VALUE  40000
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -25,6 +32,8 @@ class AbstractPiece {
   virtual std::vector<Vec> getPotentialMoves() const = 0;
   // returns the name of the Chess piece. For example, "king"
   virtual std::string getName() const = 0;
+  // returns the rank of a Piece
+  virtual int getRank() const = 0;
   // add elements to the corresponding vectors
   void addAvailableMove(std::string move);
   void addTarget(std::string target);
@@ -51,6 +60,7 @@ class King: public AbstractPiece {
   bool isCastleable() const override;
   void setCastleable(bool value) override;
   std::string getName() const override;
+  int getRank() const override;
 };
 class Queen: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
@@ -58,6 +68,7 @@ class Queen: public AbstractPiece {
   Queen(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  int getRank() const override;
 };
 class Rook: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
@@ -68,6 +79,7 @@ class Rook: public AbstractPiece {
   bool isCastleable() const override;
   void setCastleable(bool value) override;
   std::string getName() const override;
+  int getRank() const override;
 };
 class Knight: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
@@ -75,6 +87,7 @@ class Knight: public AbstractPiece {
   Knight(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  int getRank() const override;
 };
 class Bishop: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
@@ -82,6 +95,7 @@ class Bishop: public AbstractPiece {
   Bishop(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  int getRank() const override;
 };
 class WhitePawn: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
@@ -90,6 +104,7 @@ class WhitePawn: public AbstractPiece {
   WhitePawn(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  int getRank() const override;
   bool isEnPassantable() const override;
   void setEnPassantable(bool value) override;
 };
@@ -100,6 +115,7 @@ class BlackPawn: public AbstractPiece {
   BlackPawn(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  int getRank() const override;
   bool isEnPassantable() const override;
   void setEnPassantable(bool value) override;
 };

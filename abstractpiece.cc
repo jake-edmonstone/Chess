@@ -115,6 +115,21 @@ unique_ptr<AbstractPiece> WhitePawn::clone() const {
   return std::make_unique<WhitePawn>(*this);
 }
 
+int King::getRank() const { return KING_VALUE; }
+
+int Queen::getRank() const { return QUEEN_VALUE; }
+
+int Rook::getRank() const { return ROOK_VALUE; }
+
+int Knight::getRank() const { return KNIGHT_VALUE; }
+
+int Bishop::getRank() const { return BISHOP_VALUE; }
+
+int WhitePawn::getRank() const { return PAWN_VALUE; }
+
+int BlackPawn::getRank() const { return PAWN_VALUE; }
+
+
 bool AbstractPiece::isCastleable() const { return false; }
 
 void AbstractPiece::setCastleable(bool value) { ; }
