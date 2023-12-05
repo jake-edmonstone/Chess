@@ -423,6 +423,13 @@ bool ChessBoard::isInsufficientMaterial() const {
   return whiteInsufficient && blackInsufficient;
 }
 
+void ChessBoard::doUpdates() {
+  dontCheckYourself();
+  getOutOfCheck();
+  updatePieceLists();
+  updatePositions();
+}
+
 void printElements(vector<int> vec) {
   for (auto m: vec) {
     cout << m << endl;

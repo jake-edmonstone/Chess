@@ -119,7 +119,7 @@ vector<std::pair<string, string>> AbstractPlayer::getMovesCheck() const {
   vector<pair<string, string>> possibleChecks;
 
   if (this->getColour() == "white") {
-    for (const auto &piece : cb->whitePieces) {
+    for (const auto &piece : cb->getPieces("white")) {
       start = piece->getPosition();
       for (const auto &move : piece->getAvailableMoves()) {
         ChessBoard temp{*cb};
@@ -130,7 +130,7 @@ vector<std::pair<string, string>> AbstractPlayer::getMovesCheck() const {
       }
     }
   } else if (this->getColour() == "black") {
-    for (const auto &piece: cb->blackPieces) {
+    for (const auto &piece: cb->getPieces("black")) {
       start = piece->getPosition();
       for (const auto &move : piece->getAvailableMoves()) {
         ChessBoard temp{*cb};
@@ -149,7 +149,7 @@ vector<std::pair<string, string>> AbstractPlayer::getMovesCheckMate() const {
   vector<pair<string, string>> possibleCheckMates;
 
   if (this->getColour() == "white") {
-    for (const auto &piece : cb->whitePieces) {
+    for (const auto &piece : cb->getPieces("white")) {
       start = piece->getPosition();
       for (const auto &move : piece->getAvailableMoves()) {
         ChessBoard temp{*cb};
@@ -160,7 +160,7 @@ vector<std::pair<string, string>> AbstractPlayer::getMovesCheckMate() const {
       }
     }
   } else if (this->getColour() == "black") {
-    for (const auto &piece: cb->blackPieces) {
+    for (const auto &piece: cb->getPieces("black")) {
       start = piece->getPosition();
       for (const auto &move : piece->getAvailableMoves()) {
         ChessBoard temp{*cb};
@@ -179,16 +179,16 @@ vector<std::pair<string, string>> AbstractPlayer::getMovesCapture() const {
   vector<pair<string, string>> possibleCaptures;
 
   if (this->getColour() == "white") {
-    for (const auto &piece : cb->whitePieces) {
+    for (const auto &piece : cb->getPieces("white")) {
       start = piece->getPosition();
-      for (const auto &move : piece->targets) {
+      for (const auto &move : piece->getTargets()) {
         possibleCaptures.emplace_back(pair<string, string>(start, move));
       }
     }
   } else if (this->getColour() == "black") {
-    for (const auto &piece: cb->blackPieces) {
+    for (const auto &piece: cb->getPieces("black")) {
       start = piece->getPosition();
-      for (const auto &move : piece->targets) {
+      for (const auto &move : piece->getTargets()) {
         possibleCaptures.emplace_back(pair<string, string>(start, move));
       }
     }
@@ -201,28 +201,26 @@ std::vector<std::pair<std::string, std::string>> AbstractPlayer::getMovesAvoidTh
   vector<pair<string, string>> threatAvoidantMoves;
 
   if (this->getColour() == "white") {
-    for (const auto &piece : cb->whitePieces) {
+    for (const auto &piece : cb->getPieces("white")) {
       start = piece->getPosition();
-      if (piece->threats.size() > 0) {
-        for (auto& move : piece->availableMoves) {
+      if (piece->getThreats().size() > 0) {
+        for (auto& move : piece->getAvailableMoves()) {
           ChessBoard temp{*cb};
           temp.movePiece(start, move);
-          pair<int, int> mv = temp.rankFileToIntPair(move);
-          if (temp.board[mv.first][mv.second]->threats.empty()) {
+          if (temp.getPiece(move)->getThreats().empty()) {
             threatAvoidantMoves.emplace_back(start, move);
           }
         }
       }
     }
   } else if (this->getColour() == "black") {
-    for (const auto &piece : cb->blackPieces) {
+    for (const auto &piece : cb->getPieces("black")) {
       start = piece->getPosition();
-      if (piece->threats.size() > 0) {
-        for (auto& move : piece->availableMoves) {
+      if (piece->getThreats().size() > 0) {
+        for (auto& move : piece->getAvailableMoves()) {
           ChessBoard temp{*cb};
           temp.movePiece(start, move);
-          pair<int, int> mv = temp.rankFileToIntPair(move);
-          if (temp.board[mv.first][mv.second]->threats.empty()) {
+          if (temp.getPiece(move)->getThreats().empty()) {
             threatAvoidantMoves.emplace_back(start, move);
           }
         }
@@ -236,19 +234,19 @@ pair<string, string> AbstractPlayer::getRandomMove() const {
   vector<const AbstractPiece*> moves;
 
   if (this->getColour() == "white") {
-    for (auto &p: cb->whitePieces) {
-      if (!p->availableMoves.empty()) { moves.emplace_back(p); }
+    for (auto &p: cb->getPieces("white")) {
+      if (!p->getAvailableMoves().empty()) { moves.emplace_back(p); }
     }
   }
 
   if (this->getColour() == "black") {
-    for (auto &p: cb->blackPieces) {
-      if (!p->availableMoves.empty()) { moves.emplace_back(p); }
+    for (auto &p: cb->getPieces("black")) {
+      if (!p->getAvailableMoves().empty()) { moves.emplace_back(p); }
     }
   }
 
   const AbstractPiece* piece = getRandomElement<const AbstractPiece*>(moves);
-  return pair<string, string>(piece->getPosition(), getRandomElement(piece->availableMoves));
+  return pair<string, string>(piece->getPosition(), getRandomElement(piece->getAvailableMoves()));
 }
 
 Computer2::Computer2(ChessBoard *cb, std::string colour): AbstractPlayer{cb, colour} {}
@@ -303,8 +301,8 @@ char Computer3::getPromotionDecision() const {
 void Computer4::findPossibleMoves(State& state, int depth, bool turn) const {
   if (depth == 0) { return; }
   if (turn) {
-    for (auto& piece : state.cb.blackPieces) {
-      for (auto& move : piece->availableMoves) {
+    for (auto& piece : state.cb.getPieces("black")) {
+      for (auto& move : piece->getAvailableMoves()) {
         shared_ptr<ChessBoard> temp = make_shared<ChessBoard>(state.cb);
         temp->movePiece(piece->getPosition(), move);
         shared_ptr<State> nextstate = make_shared<State>(*temp, pair(piece->getPosition(), move));
@@ -313,8 +311,8 @@ void Computer4::findPossibleMoves(State& state, int depth, bool turn) const {
       }
     }
   } else {
-    for (auto& piece : state.cb.whitePieces) {
-      for (auto& move : piece->availableMoves) {
+    for (auto& piece : state.cb.getPieces("white")) {
+      for (auto& move : piece->getAvailableMoves()) {
         shared_ptr<ChessBoard> temp = make_shared<ChessBoard>(state.cb);
         temp->movePiece(piece->getPosition(), move);
         shared_ptr<State> nextstate = make_shared<State>(*temp, pair(piece->getPosition(), move));
@@ -375,34 +373,28 @@ int Computer4::minimax(const ChessBoard* bp, int depth, bool isblack) const {
   int value = 0;
   if (!isblack) {
     value = -1000000;
-    for (auto piece : bp->whitePieces) {
-      for (const auto &move : piece->availableMoves) {
+    for (auto piece : bp->getPieces("white")) {
+      for (const auto &move : piece->getAvailableMoves()) {
         ChessBoard temp{*bp};
         temp.movePiece(piece->getPosition(), move);
         if (temp.pawnOnFirstOrLastRank()) {
           temp.placePiece('Q', move);
           temp.calculateAvailableMoves();
-          temp.dontCheckYourself();
-          temp.getOutOfCheck();
-          temp.updatePieceLists();
-          temp.updatePositions();
+          temp.doUpdates();
         }
         value = max(value, minimax(&temp, depth - 1, true));
       }
     }
   } else {
     value = 1000000;
-    for (auto piece : bp->blackPieces) {
-      for (const auto &move : piece->availableMoves) {
+    for (auto piece : bp->getPieces("black")) {
+      for (const auto &move : piece->getAvailableMoves()) {
         ChessBoard temp{*bp};
         temp.movePiece(piece->getPosition(), move);
         if (temp.pawnOnFirstOrLastRank()) {
           temp.placePiece('q', move);
           temp.calculateAvailableMoves();
-          temp.dontCheckYourself();
-          temp.getOutOfCheck();
-          temp.updatePieceLists();
-          temp.updatePositions();
+          temp.doUpdates();
         }
         value = min(value, minimax(&temp, depth - 1, false));
       }
@@ -420,8 +412,8 @@ std::pair<std::string, std::string> Computer4::getMove(string config) const {
   int value;
   if (this->colour == "white") {
     value = -1000000;
-    for (const auto piece : cb->whitePieces) {
-      for (auto move : piece->availableMoves) {
+    for (const auto piece : cb->getPieces("white")) {
+      for (auto move : piece->getAvailableMoves()) {
         ChessBoard temp{*cb};
         temp.movePiece(piece->getPosition(), move);
         int newValue = minimax(&temp, 3, true);
@@ -433,8 +425,8 @@ std::pair<std::string, std::string> Computer4::getMove(string config) const {
     }
   } else if (this->colour == "black") {
     value = 1000000;
-    for (auto piece: cb->blackPieces) {
-      for (auto move : piece->availableMoves) {
+    for (auto piece: cb->getPieces("black")) {
+      for (auto move : piece->getAvailableMoves()) {
         ChessBoard temp{*cb};
         temp.movePiece(piece->getPosition(), move);
         int newValue = minimax(&temp, 3, false);

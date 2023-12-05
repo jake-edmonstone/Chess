@@ -44,7 +44,9 @@ class AbstractPiece {
   std::string getColour() const; 
   std::string getPosition() const;
   const std::vector<std::string> &getTargets() const;
+  const std::vector<std::string> &getThreats() const;
   const std::vector<std::string> &getAvailableMoves() const;
+  virtual int getRank() const = 0;
   friend class ChessBoard;
 };
 
@@ -103,6 +105,7 @@ class WhitePawn: public AbstractPiece {
   WhitePawn(std::string colour, std::string position);
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
+  int getRank() const override;
 };
 class BlackPawn: public AbstractPiece {
   std::unique_ptr<AbstractPiece> clone() const override;
@@ -114,8 +117,6 @@ class BlackPawn: public AbstractPiece {
   std::vector<Vec> getPotentialMoves() const override;
   std::string getName() const override;
   int getRank() const override;
-  bool isEnPassantable() const override;
-  void setEnPassantable(bool value) override;
 };
 
 bool threatens(const AbstractPiece* threat, const AbstractPiece* victim);

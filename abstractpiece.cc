@@ -24,6 +24,8 @@ void AbstractPiece::addThreat(string threat) { threats.emplace_back(threat); }
 
 const std::vector<std::string> &AbstractPiece::getTargets() const { return targets; }
 
+const std::vector<std::string> &AbstractPiece::getThreats() const { return threats; }
+
 bool threatens(const AbstractPiece* threat, const AbstractPiece* victim) {
   if (threat != nullptr && victim != nullptr) {
     if (in(threat->getTargets(), victim->getName())) { return true; }

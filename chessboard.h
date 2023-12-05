@@ -64,6 +64,8 @@ class ChessBoard {
   bool isCheckMate(std::string colour) const;
   bool isStaleMate(std::string colour) const;
   bool isInsufficientMaterial() const;
+  // updates piece lists and makes sure only legal moves are available
+  void doUpdates();
   // moves a piece from one location on the board to another; for example, "f3" to "d3"
   // requires: there exists a piece at start
   bool movePiece(std::string start, std::string end);
